@@ -1,0 +1,283 @@
+<div class="program-header">
+  <h1><%= @program.title %></h1>
+  <div class="program-actions">
+    <% if @program.ready? && @program.published_at.nil? %>
+      <%= form_with url: cms_program_path(@program), method: :patch, local: false, class: "publish-form" do |f| %>
+        <%= hidden_field_tag "program[published_at]", Time.current %>
+        <%= f.submit t('programs.show.publish_now'), class: "btn btn-success", data: { confirm: t('programs.show.publish_confirm') } %>
+      <% end %>
+    <% elsif @program.ready? && @program.published_at.present? %>
+      <span class="published-badge"><%= t('programs.show.published_on') %> <%= @program.published_at.strftime("%d %B %Y") %></span>
+    <% end %>
+    <%= link_to t('common.edit'), edit_cms_program_path(@program), class: "btn" %>
+    <%= link_to t('programs.show.back_to_list'), cms_programs_path, class: "btn btn-secondary" %>
+  </div>
+</div>
+
+<div class="program-details">
+  <div class="detail-card">
+    <h2><%= t('programs.show.program_info') %></h2>
+    
+    <div class="detail-row">
+      <label><%= t('common.status') %>:</label>
+      <span class="status-badge status-<%= @program.status %>" id="program-status">
+        <%= t("status.#{@program.status}") %>
+      </span>
+    </div>
+    
+    <div class="detail-row">
+      <label><%= t('programs.show.type') %>:</label>
+      <span class="chip <%= @program.kind %>">
+        <%= t("program_types.#{@program.kind}") %>
+      </span>
+    </div>
+    
+    <div class="detail-row">
+      <label><%= t('discovery.language') %>:</label>
+      <span><%= t("languages.#{@program.language}") %></span>
+    </div>
+    
+    <% if @program.category %>
+      <div class="detail-row">
+        <label><%= t('discovery.category') %>:</label>
+        <span><%= @program.category %></span>
+      </div>
+    <% end %>
+    
+    <div class="detail-row">
+      <label><%= t('programs.show.published_on') %>:</label>
+      <span><%= @program.published_at&.strftime("%d %B %Y في %I:%M %p") || t('programs.show.not_published') %></span>
+    </div>
+    
+    <% if @program.duration_seconds %>
+      <div class="detail-row">
+        <label><%= t('programs.show.duration') %>:</label>
+        <span><%= time_duration_in_words(@program.duration_seconds) %></span>
+      </div>
+    <% end %>
+    
+    <% if @program.tags.any? %>
+      <div class="detail-row">
+        <label><%= t('programs.new.tags') %>:</label>
+        <div class="tags">
+          <% @program.tags.each do |tag| %>
+            <span class="chip"><%= tag %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    
+    <% if @program.description %>
+      <div class="detail-row">
+        <label><%= t('programs.new.description') %>:</label>
+        <p><%= simple_format(@program.description) %></p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Upload Section -->
+<% if @program.status == 'draft' %>
+  <div class="upload-section">
+    <div class="detail-card">
+      <h2><%= t('programs.show.upload_video') %></h2>
+      <p><%= t('programs.show.upload_description') %></p>
+      
+      <%= form_with url: "#", id: "upload-form", local: false do |f| %>
+        <div class="form-group">
+          <%= f.label :file, t('programs.show.video_file') %>
+          <%= f.file_field :file, id: "file-input", class: "form-control", accept: "video/*", required: true %>
+          <small class="form-text"><%= t('programs.show.supported_formats') %></small>
+        </div>
+        
+        <div id="progress-container" style="display: none;">
+          <label><%= t('programs.show.upload_progress') %></label>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+        
+        <input type="hidden" id="program-id" value="<%= @program.id %>">
+        <%= f.submit t('programs.show.upload'), id: "upload-btn", class: "btn", disabled: true %>
+      <% end %>
+    </div>
+  </div>
+<% elsif @program.status == 'processing' %>
+  <div class="upload-section">
+    <div class="detail-card">
+      <h2><%= t('programs.show.processing_video') %></h2>
+      <div class="alert alert-info">
+        <%= t('programs.show.processing_description') %>
+      </div>
+      
+      <div class="processing-animation">
+        <div class="spinner"></div>
+        <p><%= t('programs.show.processing_status') %></p>
+      </div>
+    </div>
+  </div>
+<% elsif @program.status == 'ready' %>
+  <div class="upload-section">
+    <div class="detail-card">
+      <h2><%= t('programs.show.preview') %></h2>
+      <div class="alert alert-success">
+        <%= t('programs.show.ready_message') %>
+      </div>
+      
+      <div id="preview-container">
+        <div class="video-player">
+          <video controls width="100%" id="preview-player">
+            <%= t('programs.show.video_not_supported') %>
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+<% elsif @program.status == 'failed' %>
+  <div class="upload-section">
+    <div class="detail-card">
+      <h2><%= t('programs.show.processing_failed') %></h2>
+      <div class="alert alert-error">
+        <%= t('programs.show.processing_error') %>
+      </div>
+      
+      <%= form_with url: "#", id: "upload-form", local: false do |f| %>
+        <div class="form-group">
+          <%= f.label :file, t('programs.show.video_file') %>
+          <%= f.file_field :file, id: "file-input", class: "form-control", accept: "video/*", required: true %>
+        </div>
+        
+        <div id="progress-container" style="display: none;">
+          <label><%= t('programs.show.upload_progress') %></label>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+          </div>
+        </div>
+        
+        <input type="hidden" id="program-id" value="<%= @program.id %>">
+        <%= f.submit t('programs.show.retry_upload'), id: "upload-btn", class: "btn", disabled: true %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<style>
+  .program-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .program-actions {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .program-details {
+    margin-bottom: 2rem;
+  }
+  
+  .detail-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+  }
+  
+  .detail-card h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+  
+  .detail-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+  }
+  
+  .detail-row label {
+    font-weight: 600;
+    min-width: 120px;
+    color: #555;
+  }
+  
+  .tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .upload-section .form-text {
+    color: #6c757d;
+    font-size: 0.875rem;
+  }
+  
+  .processing-animation {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .video-player {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .publish-form {
+    display: inline-block;
+    margin-right: 1rem;
+  }
+  
+  .btn-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+  }
+  
+  .btn-success:hover {
+    background-color: #218838;
+  }
+  
+  .published-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-right: 1rem;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize real-time status updates via Action Cable
+    initializeProgramStatusSubscription('<%= @program.id %>');
+    
+    <% if @program.status == 'ready' && @program.stream_url %>
+      // Initialize preview player
+      const videoElement = document.getElementById('preview-player');
+      if (videoElement) {
+        initializePlayer(videoElement, '<%= @program.stream_url %>');
+      }
+    <% end %>
+  });
+</script>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>" dir="<%= I18n.locale == :ar ? 'rtl' : 'ltr' %>">
+  <head>
+    <title><%= t('app.name') %> - <%= t('app.slogan') %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload" %>
+    
+    <!-- Action Cable -->
+    <%= action_cable_meta_tag %>
+    <script src="https://unpkg.com/@rails/actioncable@latest/app/assets/javascripts/actioncable.js"></script>
+    <script>
+      window.App = window.App || {};
+      window.App.cable = ActionCable.createConsumer();
+    </script>
+    <script src="/assets/javascripts/program_status.js"></script>
+    
+    <%= render 'shared/upload_js' %>
+    
+    <script>
+      window.CLOUDFRONT_DOMAIN = '<%= ENV["CLOUDFRONT_DOMAIN"] %>';
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        background: #F8F9FA;
+        color: #212529;
+        font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        min-height: 100vh;
+        direction: <%= I18n.locale == :ar ? 'rtl' : 'ltr' %>;
+      }
+      
+      .navbar {
+        background: #FFFFFF;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #E9ECEF;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      
+      .brand-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        direction: ltr;
+      }
+      
+      .navbar .logo {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #00D35B;
+        text-decoration: none;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.25rem;
+      }
+      
+      .slogan {
+        font-size: 0.75rem;
+        color: #6C757D;
+        font-weight: 500;
+        font-style: italic;
+        direction: rtl;
+      }
+      
+      .language-switcher {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        margin-left: 1rem;
+      }
+      
+      .lang-link {
+        color: #6C757D;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+      }
+      
+      .lang-link:hover {
+        color: #00D35B;
+        background: rgba(0, 211, 91, 0.1);
+      }
+      
+      .lang-link.active {
+        color: #00D35B;
+        background: rgba(0, 211, 91, 0.1);
+        font-weight: 600;
+      }
+      
+      .navbar nav {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        direction: rtl;
+      }
+      
+      .navbar nav a {
+        color: #6C757D;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+      }
+      
+      .navbar nav a:hover {
+        color: #00D35B;
+        background: rgba(0, 211, 91, 0.1);
+      }
+      
+      .btn {
+        background: #00D35B;
+        color: #000000;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-block;
+        font-family: inherit;
+        direction: rtl;
+      }
+      
+      .btn:hover {
+        background: #00B94E;
+        color: #000000;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 211, 91, 0.3);
+      }
+      
+      .btn-secondary {
+        background: #00D35B;
+        color: #000000;
+        border: 1px solid #00D35B;
+      }
+      
+      .btn-secondary:hover {
+        background: #00B94E;
+        color: #000000;
+        border-color: #00B94E;
+        transform: translateY(-2px);
+      }
+      
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+        direction: rtl;
+      }
+      
+      .alert {
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+      }
+      
+      .alert-success {
+        background: rgba(0, 211, 91, 0.1);
+        color: #00D35B;
+        border: 1px solid rgba(0, 211, 91, 0.3);
+      }
+      
+      .alert-error {
+        background: rgba(220, 53, 69, 0.1);
+        color: #FF6B7A;
+        border: 1px solid rgba(220, 53, 69, 0.3);
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        color: #212529;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+      
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+      }
+      
+      p {
+        color: #6C757D;
+        margin-bottom: 1rem;
+      }
+      
+      .form-control {
+        background: #FFFFFF;
+        border: 1px solid #DEE2E6;
+        color: #495057;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        width: 100%;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+      }
+      
+      .form-control:focus {
+        outline: none;
+        border-color: #00D35B;
+        box-shadow: 0 0 0 3px rgba(0, 211, 91, 0.1);
+      }
+      
+      .form-control::placeholder {
+        color: #ADB5BD;
+      }
+      
+      textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+      }
+      
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #495057;
+      }
+      
+      .chip {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+      }
+      
+      .chip.podcast {
+        background: rgba(0, 211, 91, 0.1);
+        color: #00D35B;
+        border: 1px solid rgba(0, 211, 91, 0.3);
+      }
+      
+      .chip.documentary {
+        background: rgba(138, 43, 226, 0.1);
+        color: #8A2BE2;
+        border: 1px solid rgba(138, 43, 226, 0.3);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="navbar">
+        <div class="brand-section">
+          <%= link_to t('app.name'), root_path, class: "logo" %>
+          <span class="slogan"><%= t('app.slogan') %></span>
+        </div>
+        
+        <nav>
+          <%= link_to t('nav.home'), root_path %>
+          
+          <% if user_signed_in? %>
+            <% if current_user.can_manage_programs? %>
+              <%= link_to t('nav.cms'), cms_programs_path %>
+            <% end %>
+          <% else %>
+            <%= link_to t('nav.login'), new_user_session_path, class: "btn" %>
+            <%= link_to t('nav.signup'), new_user_registration_path, class: "btn btn-secondary" %>
+          <% end %>
+          
+          <!-- Language Switcher -->
+          <div class="language-switcher">
+            <%= link_to "العربية", url_for(locale: :ar), class: "lang-link #{'active' if I18n.locale == :ar}" %>
+            <%= link_to "English", url_for(locale: :en), class: "lang-link #{'active' if I18n.locale == :en}" %>
+          </div>
+          
+          <% if user_signed_in? %>
+            <%= link_to t('nav.logout'), destroy_user_session_path, method: :delete, class: "btn btn-secondary" %>
+          <% end %>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <div id="alerts">
+        <% if notice %>
+          <div class="alert alert-success"><%= notice %></div>
+        <% end %>
+        
+        <% if alert %>
+          <div class="alert alert-error"><%= alert %></div>
+        <% end %>
+      </div>
+
+      <%= yield %>
+    </div>
+  </body>
+</html>

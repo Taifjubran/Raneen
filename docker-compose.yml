@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: raneen_postgres
+    environment:
+      POSTGRES_DB: raneen_development
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: raneen_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: raneen_web
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+      - node_modules:/app/node_modules
+    env_file:
+      - .env.development
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/raneen_development
+      REDIS_URL: redis://redis:6379/0
+      RAILS_ENV: development
+      # AWS Configuration
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      S3_UPLOADS_BUCKET: ${S3_UPLOADS_BUCKET}
+      S3_OUTPUTS_BUCKET: ${S3_OUTPUTS_BUCKET}
+      CLOUDFRONT_DOMAIN: ${CLOUDFRONT_DOMAIN}
+      # CMS Authentication
+      CMS_USERNAME: ${CMS_USERNAME}
+      CMS_PASSWORD: ${CMS_PASSWORD}
+      # CORS
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+    stdin_open: true
+    tty: true
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails db:create db:migrate && bundle exec rails server -b 0.0.0.0"
+
+  # Sidekiq for background jobs
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: raneen_sidekiq
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+    env_file:
+      - .env.development
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/raneen_development
+      REDIS_URL: redis://redis:6379/0
+      RAILS_ENV: development
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      S3_UPLOADS_BUCKET: ${S3_UPLOADS_BUCKET}
+      S3_OUTPUTS_BUCKET: ${S3_OUTPUTS_BUCKET}
+      CLOUDFRONT_DOMAIN: ${CLOUDFRONT_DOMAIN}
+      CMS_USERNAME: ${CMS_USERNAME}
+      CMS_PASSWORD: ${CMS_PASSWORD}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+    command: bundle exec sidekiq
+
+volumes:
+  postgres_data:
+  redis_data:
+  bundle_cache:
+  node_modules:

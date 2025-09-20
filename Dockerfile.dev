@@ -1,0 +1,33 @@
+# Development Dockerfile for Streambox
+FROM ruby:3.2.0
+
+# Install dependencies
+RUN apt-get update -qq && \
+    apt-get install -y \
+    build-essential \
+    libpq-dev \
+    nodejs \
+    postgresql-client \
+    curl \
+    git \
+    vim \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy Gemfile and install gems
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+# Copy the rest of the application
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p tmp/pids tmp/cache tmp/sockets log
+
+# Expose port 3000
+EXPOSE 3000
+
+# Start Rails server
+CMD ["bash", "-c", "rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0"]

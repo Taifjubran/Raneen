@@ -1,0 +1,239 @@
+# Files in the config/locales directory are used for internationalization and
+# are automatically loaded by Rails. If you want to use locales other than
+# English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t "hello"
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t("hello") %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# To learn more about the API, please read the Rails Internationalization guide
+# at https://guides.rubyonrails.org/i18n.html.
+#
+# Be aware that YAML interprets the following case-insensitive strings as
+# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
+# must be quoted to be interpreted as strings. For example:
+#
+#     en:
+#       "yes": yup
+#       enabled: "ON"
+
+en:
+  # Application
+  app:
+    name: "Raneen"
+    slogan: "Broadcasting that passes, its echo remains"
+    
+  # Navigation
+  nav:
+    home: "Home"
+    discovery: "Discovery"
+    cms: "CMS"
+    login: "Login"
+    logout: "Logout"
+    signup: "Sign Up"
+    
+  # Common
+  common:
+    back: "Back"
+    edit: "Edit"
+    delete: "Delete"
+    save: "Save"
+    cancel: "Cancel"
+    create: "Create"
+    update: "Update"
+    search: "Search"
+    clear_filters: "Clear Filters"
+    loading: "Loading..."
+    error: "Error"
+    status: "Status"
+    confirm_delete: "Are you sure?"
+    
+  # Program types
+  program_types:
+    podcast: "Podcast"
+    documentary: "Documentary"
+    
+  # Languages
+  languages:
+    ar: "Arabic"
+    en: "English"
+    
+  # Status
+  status:
+    draft: "Draft"
+    processing: "Processing"
+    ready: "Ready"
+    failed: "Failed"
+    
+  # Discovery page
+  discovery:
+    title: "Discover Content"
+    subtitle: "Explore a variety of programs, podcasts, and documentaries"
+    search_programs: "Search Programs"
+    search_placeholder: "Search by title, description, or tags..."
+    content_type: "Content Type"
+    language: "Language"
+    category: "Category"
+    category_placeholder: "Category..."
+    all_types: "All Types"
+    all_languages: "All Languages"
+    all_categories: "All Categories"
+    results_title: "Search Results"
+    results_found: "results"
+    no_results: "No results found"
+    no_results_hint: "Try using different words or changing the filters"
+    
+  # CMS
+  cms:
+    title: "Content Management System - Raneen"
+    new_program: "Create New Program"
+    
+  # Program creation
+  programs:
+    new:
+      title: "Create New Program"
+      subtitle: "Create new content and upload it to the streaming platform"
+      basic_info: "Basic Information"
+      classification: "Categories and Tags"
+      publishing: "Publishing Options"
+      file_upload: "File Upload"
+      
+      # Form fields
+      program_title: "Program Title"
+      program_title_placeholder: "Enter program title..."
+      description: "Description"
+      description_placeholder: "Write a detailed description of the program content and objectives..."
+      content_type: "Content Type"
+      content_type_prompt: "Choose content type"
+      language: "Content Language"
+      language_prompt: "Choose language"
+      category: "Category"
+      choose_category: "Choose category"
+      tags: "Tags"
+      choose_tag: "Choose tag"
+      publish_date: "Publish Date"
+      publish_date_hint: "Leave empty if you want to publish later"
+      content_file: "Content File"
+      
+      # Categories
+      add_new_category: "+ Add New Category"
+      new_category_placeholder: "Enter new category..."
+      
+      # Tags
+      add_new_tag: "+ Add New Tag"
+      new_tag_placeholder: "Enter new tag..."
+      
+      # File upload
+      upload_area_text: "Click here to choose a file or drag it to this area"
+      upload_hint: "Maximum: 5GB - Supported formats: MP4, MOV, AVI, MP3, WAV"
+      upload_progress: "Upload Progress"
+      
+      # Buttons
+      create_program: "Create Program"
+      create_and_upload: "Create Program & Upload Content"
+      creating: "Creating..."
+      uploading: "Uploading Content..."
+      
+      # Error messages
+      create_failed: "Failed to create program"
+      upload_failed: "Upload failed"
+      program_id_error: "Could not determine program ID after creation"
+      
+    show:
+      program_info: "Program Information"
+      publish_now: "Publish Now"
+      publish_confirm: "Are you sure you want to publish this program?"
+      back_to_list: "Back to List"
+      published_on: "Published on"
+      not_published: "Not published"
+      type: "Type"
+      duration: "Duration"
+      
+      # Upload sections
+      upload_video: "Upload Video File"
+      upload_description: "Select a video file to upload and process for streaming."
+      video_file: "Video File"
+      supported_formats: "Supported formats: MP4, MOV, AVI (max 5GB)"
+      upload_progress: "Upload Progress:"
+      upload: "Upload"
+      
+      processing_video: "Processing Video"
+      processing_description: "Your video is being processed. This may take several minutes depending on the file size. The page will automatically update when processing is complete."
+      processing_status: "Processing video for streaming..."
+      
+      preview: "Preview"
+      ready_message: "Your program is ready for streaming!"
+      video_not_supported: "Your browser does not support the video tag."
+      
+      processing_failed: "Processing Failed"
+      processing_error: "There was an error processing your video. Please try uploading again."
+      retry_upload: "Retry Upload"
+      
+    index:
+      no_description: "No description available"
+      no_programs: "No programs yet"
+      create_first: "Create your first program to get started"
+      
+    edit:
+      title: "Edit Program"
+      update_program: "Update Program"
+      error_count: "error"
+      errors_prevented_save: "prohibited this program from being saved:"
+      program_title: "Program Title"
+      description: "Description"
+      content_type: "Content Type"
+      language: "Language"
+      category: "Category"
+      publish_date: "Publish Date"
+      tags_hint: "Tags (comma separated)"
+      tags_placeholder: "technology, innovation, AI"
+      media_file: "Media File"
+      current_file: "Current File"
+      duration: "Duration"
+      stream_url: "Stream URL"
+      view_stream: "View Stream"
+      upload_failed_message: "File upload failed. You can retry by uploading a new file."
+      no_file_uploaded: "No file uploaded yet"
+      replace_file: "Replace File"
+      upload_file: "Upload File"
+      upload_hint: "You can upload a new file to replace the current one. The current file will not be deleted until the new upload succeeds."
+      upload_area_text: "Click to choose a file or drag it here"
+      choose_file: "Choose File"
+      selected_file: "Selected File"
+      file_size: "File Size"
+      start_upload: "Start Upload"
+      uploading: "Uploading..."
+      upload_success: "File uploaded successfully! Processing will begin shortly."
+      upload_error: "Upload failed"
+      invalid_file_type: "Please select a video or audio file"
+      
+  # Categories
+  categories:
+    technology: "Technology"
+    education: "Education"
+    entertainment: "Entertainment"
+    news: "News"
+    sports: "Sports"
+    health: "Health"
+    business: "Business"
+    arts: "Arts"
+    
+  # Common tags
+  tags:
+    demo: "Demo"
+    development: "Development"
+    streaming: "Streaming"
+    test: "Test"
+    technology: "Technology"
+    innovation: "Innovation"
+    ai: "AI"

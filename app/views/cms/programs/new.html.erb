@@ -1,0 +1,856 @@
+<div class="page-header">
+  <h1><%= t('programs.new.title') %></h1>
+  <p class="subtitle"><%= t('programs.new.subtitle') %></p>
+</div>
+
+<div class="form-container">
+  <%= form_with model: [:cms, @program], local: true, data: { turbo: false } do |f| %>
+    <% if @program.errors.any? %>
+      <div class="alert alert-error">
+        <div class="alert-header">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2"/>
+            <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <h4><%= t('programs.new.create_failed') %></h4>
+        </div>
+        <ul>
+          <% @program.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <!-- Basic Information Section -->
+    <div class="form-section">
+      <h3 class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <%= t('programs.new.basic_info') %>
+      </h3>
+      
+      <div class="form-group">
+        <%= f.label :title, t('programs.new.program_title') + " *", class: "required" %>
+        <%= f.text_field :title, class: "form-control", required: true, 
+            placeholder: t('programs.new.program_title_placeholder') %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :description, t('programs.new.description') %>
+        <%= f.text_area :description, class: "form-control", rows: 4, 
+            placeholder: t('programs.new.description_placeholder') %>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <%= f.label :kind, t('programs.new.content_type') + " *", class: "required" %>
+          <%= f.select :kind, 
+              options_for_select([
+                [t('program_types.podcast'), 'podcast'], 
+                [t('program_types.documentary'), 'documentary']
+              ], @program.kind), 
+              { prompt: t('programs.new.content_type_prompt') }, 
+              { class: "form-control", required: true } %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :language, t('programs.new.language') + " *", class: "required" %>
+          <%= f.select :language, 
+              options_for_select([
+                [t('languages.ar'), 'ar'], 
+                [t('languages.en'), 'en']
+              ], @program.language || 'ar'), 
+              { prompt: t('programs.new.language_prompt') }, 
+              { class: "form-control", required: true } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classification Section -->
+    <div class="form-section">
+      <h3 class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <%= t('programs.new.classification') %>
+      </h3>
+
+      <div class="form-group">
+        <%= f.label :category, t('programs.new.category') %>
+        <div class="select-with-add">
+          <select id="category-select" class="form-control">
+            <option value=""><%= t('programs.new.choose_category') %></option>
+            <option value="Technology"><%= t('categories.technology') %></option>
+            <option value="Education"><%= t('categories.education') %></option>
+            <option value="Entertainment"><%= t('categories.entertainment') %></option>
+            <option value="News"><%= t('categories.news') %></option>
+            <option value="Sports"><%= t('categories.sports') %></option>
+            <option value="Health"><%= t('categories.health') %></option>
+            <option value="Business"><%= t('categories.business') %></option>
+            <option value="Arts"><%= t('categories.arts') %></option>
+            <option value="new"><%= t('programs.new.add_new_category') %></option>
+          </select>
+          <%= f.text_field :category, class: "form-control", id: "category-input", 
+              style: "display: none;", placeholder: t('programs.new.new_category_placeholder') %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :tags, t('programs.new.tags') %>
+        <div class="tags-input-container">
+          <div class="tags-display" id="tags-display"></div>
+          <div class="select-with-add">
+            <select id="tags-select" class="form-control">
+              <option value=""><%= t('programs.new.choose_tag') %></option>
+              <option value="demo"><%= t('tags.demo') %></option>
+              <option value="development"><%= t('tags.development') %></option>
+              <option value="streaming"><%= t('tags.streaming') %></option>
+              <option value="test"><%= t('tags.test') %></option>
+              <option value="technology"><%= t('tags.technology') %></option>
+              <option value="innovation"><%= t('tags.innovation') %></option>
+              <option value="AI"><%= t('tags.ai') %></option>
+              <option value="new"><%= t('programs.new.add_new_tag') %></option>
+            </select>
+            <input type="text" id="new-tag-input" class="form-control" 
+                   style="display: none;" placeholder="<%= t('programs.new.new_tag_placeholder') %>">
+          </div>
+          <%= f.hidden_field :tags, id: "tags-hidden-input" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Publishing Section -->
+    <div class="form-section">
+      <h3 class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <%= t('programs.new.publishing') %>
+      </h3>
+
+      <div class="form-group">
+        <%= f.label :published_at, t('programs.new.publish_date') %>
+        <%= f.datetime_local_field :published_at, class: "form-control" %>
+        <small class="form-text"><%= t('programs.new.publish_date_hint') %></small>
+      </div>
+    </div>
+
+    <!-- File Upload Section -->
+    <div class="form-section">
+      <h3 class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5-5 5 5m-5-5v12" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <%= t('programs.new.file_upload') %>
+      </h3>
+
+      <div class="form-group">
+        <%= f.label :content_file, t('programs.new.content_file') %>
+        <div class="file-upload-area" id="file-upload-area">
+          <%= f.file_field :content_file, id: "content-file-input", class: "file-input", 
+              accept: "video/*,audio/*" %>
+          <div class="upload-placeholder">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5-5 5 5m-5-5v12" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <p class="upload-text"><%= t('programs.new.upload_area_text') %></p>
+          </div>
+          <div class="file-info" id="file-info" style="display: none;">
+            <div class="file-details">
+              <span class="file-name" id="file-name"></span>
+              <span class="file-size" id="file-size"></span>
+            </div>
+            <button type="button" class="remove-file" id="remove-file">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/>
+                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <div id="upload-progress-container" style="display: none;">
+          <label class="progress-label"><%= t('programs.new.upload_progress') %>:</label>
+          <div class="progress-bar">
+            <div class="progress-fill" id="upload-progress-fill"></div>
+          </div>
+          <div class="progress-text" id="upload-progress-text">0%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <%= f.submit t('programs.new.create_program'), id: "create-program-btn", class: "btn btn-primary" %>
+      <%= link_to t('common.cancel'), cms_programs_path, class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  .page-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .page-header h1 {
+    color: #212529;
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+  
+  .subtitle {
+    color: #6C757D;
+    font-size: 1.1rem;
+    margin-bottom: 0;
+  }
+  
+  .form-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+  
+  .form-section {
+    padding: 2rem;
+    border-bottom: 1px solid #E9ECEF;
+  }
+  
+  .form-section:last-of-type {
+    border-bottom: none;
+  }
+  
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #495057;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #00D35B;
+  }
+  
+  .section-title svg {
+    color: #00D35B;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 0;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.95rem;
+  }
+  
+  .form-group label.required::after {
+    content: " *";
+    color: #DC3545;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #E9ECEF;
+    border-radius: 8px;
+    background: #FFFFFF;
+    color: #495057;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: #00D35B;
+    box-shadow: 0 0 0 3px rgba(0, 211, 91, 0.1);
+  }
+  
+  .form-control::placeholder {
+    color: #ADB5BD;
+  }
+  
+  textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.5;
+  }
+  
+  .select-with-add {
+    position: relative;
+  }
+  
+  .select-with-add select,
+  .select-with-add input[type="text"] {
+    margin-bottom: 0.5rem;
+  }
+  
+  .tags-input-container {
+    border: 2px solid #E9ECEF;
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-height: 100px;
+    background: #F8F9FA;
+  }
+  
+  .tags-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    min-height: 40px;
+    align-items: flex-start;
+  }
+  
+  .tag-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #00D35B;
+    color: #FFFFFF;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  
+  .tag-remove {
+    background: none;
+    border: none;
+    color: #FFFFFF;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    opacity: 0.8;
+  }
+  
+  .tag-remove:hover {
+    opacity: 1;
+  }
+  
+  .file-upload-area {
+    border: 3px dashed #DEE2E6;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    background: #F8F9FA;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .file-upload-area:hover {
+    border-color: #00D35B;
+    background: rgba(0, 211, 91, 0.05);
+  }
+  
+  .file-upload-area.dragover {
+    border-color: #00D35B;
+    background: rgba(0, 211, 91, 0.1);
+  }
+  
+  .file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+  
+  .upload-placeholder svg {
+    color: #ADB5BD;
+    margin-bottom: 1rem;
+  }
+  
+  .upload-text {
+    color: #495057;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  
+  .upload-hint {
+    color: #6C757D;
+    font-size: 0.9rem;
+  }
+  
+  .file-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: #FFFFFF;
+    border: 2px solid #00D35B;
+    border-radius: 8px;
+  }
+  
+  .file-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .file-name {
+    font-weight: 600;
+    color: #495057;
+  }
+  
+  .file-size {
+    font-size: 0.9rem;
+    color: #6C757D;
+  }
+  
+  .remove-file {
+    background: #DC3545;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+  }
+  
+  .remove-file:hover {
+    background: #C82333;
+  }
+  
+  #upload-progress-container {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #F8F9FA;
+    border-radius: 8px;
+    border: 1px solid #E9ECEF;
+  }
+  
+  .progress-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #495057;
+  }
+  
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #E9ECEF;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00D35B, #00B94E);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+  
+  .progress-text {
+    text-align: center;
+    font-weight: 600;
+    color: #00D35B;
+  }
+  
+  .form-actions {
+    padding: 2rem;
+    background: #F8F9FA;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+  
+  .btn-primary {
+    background: #00D35B;
+    color: #000000;
+    padding: 0.875rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .btn-primary:hover:not(:disabled) {
+    background: #00B94E;
+    color: #000000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 211, 91, 0.3);
+  }
+  
+  .btn-primary:disabled {
+    background: #ADB5BD;
+    color: #FFFFFF;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .alert-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .alert-header h4 {
+    margin: 0;
+    color: inherit;
+  }
+  
+  .form-text {
+    color: #6C757D;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  
+  @media (max-width: 768px) {
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    
+    .form-container {
+      margin: 0 1rem;
+    }
+    
+    .form-section {
+      padding: 1.5rem;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+    }
+    
+    .btn-primary {
+      text-align: center;
+    }
+  }
+</style>
+
+<script>
+  let isUploading = false;
+  let selectedTags = [];
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeCategorySelect();
+    initializeTagsInput();
+    initializeFileUpload();
+    initializeFormSubmission();
+  });
+
+  function initializeCategorySelect() {
+    const categorySelect = document.getElementById('category-select');
+    const categoryInput = document.getElementById('category-input');
+
+    categorySelect.addEventListener('change', function() {
+      if (this.value === 'new') {
+        this.style.display = 'none';
+        categoryInput.style.display = 'block';
+        categoryInput.focus();
+        categoryInput.required = true;
+      } else {
+        categoryInput.value = this.value;
+      }
+    });
+
+    categoryInput.addEventListener('blur', function() {
+      if (!this.value.trim()) {
+        this.style.display = 'none';
+        categorySelect.style.display = 'block';
+        categorySelect.value = '';
+        this.required = false;
+      }
+    });
+
+    categoryInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.blur();
+      }
+    });
+  }
+
+  function initializeTagsInput() {
+    const tagsSelect = document.getElementById('tags-select');
+    const newTagInput = document.getElementById('new-tag-input');
+    const tagsDisplay = document.getElementById('tags-display');
+    const tagsHiddenInput = document.getElementById('tags-hidden-input');
+
+    function updateTagsDisplay() {
+      tagsDisplay.innerHTML = '';
+      selectedTags.forEach((tag, index) => {
+        const tagElement = document.createElement('div');
+        tagElement.className = 'tag-item';
+        tagElement.innerHTML = `
+          <span>${tag}</span>
+          <button type="button" class="tag-remove" onclick="removeTag(${index})">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/>
+              <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+        `;
+        tagsDisplay.appendChild(tagElement);
+      });
+      
+      // Update hidden input for form submission
+      tagsHiddenInput.value = selectedTags.join(',');
+    }
+
+    function addTag(tagValue) {
+      const trimmedTag = tagValue.trim();
+      if (trimmedTag && !selectedTags.includes(trimmedTag)) {
+        selectedTags.push(trimmedTag);
+        updateTagsDisplay();
+      }
+    }
+
+    window.removeTag = function(index) {
+      selectedTags.splice(index, 1);
+      updateTagsDisplay();
+    };
+
+    tagsSelect.addEventListener('change', function() {
+      if (this.value === 'new') {
+        this.style.display = 'none';
+        newTagInput.style.display = 'block';
+        newTagInput.focus();
+      } else if (this.value) {
+        addTag(this.value);
+        this.value = '';
+      }
+    });
+
+    newTagInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (this.value.trim()) {
+          addTag(this.value.trim());
+          this.value = '';
+          this.style.display = 'none';
+          tagsSelect.style.display = 'block';
+        }
+      }
+    });
+
+    newTagInput.addEventListener('blur', function() {
+      if (this.value.trim()) {
+        addTag(this.value.trim());
+        this.value = '';
+      }
+      this.style.display = 'none';
+      tagsSelect.style.display = 'block';
+    });
+  }
+
+  function initializeFileUpload() {
+    const fileInput = document.getElementById('content-file-input');
+    const uploadArea = document.getElementById('file-upload-area');
+    const fileInfo = document.getElementById('file-info');
+    const fileName = document.getElementById('file-name');
+    const fileSize = document.getElementById('file-size');
+    const removeFileBtn = document.getElementById('remove-file');
+    const uploadPlaceholder = uploadArea.querySelector('.upload-placeholder');
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function showFileInfo(file) {
+      fileName.textContent = file.name;
+      fileSize.textContent = formatFileSize(file.size);
+      uploadPlaceholder.style.display = 'none';
+      fileInfo.style.display = 'flex';
+      updateButtonText();
+    }
+
+    function hideFileInfo() {
+      uploadPlaceholder.style.display = 'block';
+      fileInfo.style.display = 'none';
+      fileInput.value = '';
+      updateButtonText();
+    }
+
+    fileInput.addEventListener('change', function() {
+      if (this.files.length > 0) {
+        showFileInfo(this.files[0]);
+      }
+    });
+
+    removeFileBtn.addEventListener('click', function() {
+      hideFileInfo();
+    });
+
+    uploadArea.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      this.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      this.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.classList.remove('dragover');
+      
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        fileInput.files = files;
+        showFileInfo(files[0]);
+      }
+    });
+  }
+
+  function updateButtonText() {
+    const submitBtn = document.getElementById('create-program-btn');
+    const fileInput = document.getElementById('content-file-input');
+    
+    if (fileInput.files.length > 0) {
+      submitBtn.textContent = '<%= t('programs.new.create_and_upload') %>';
+    } else {
+      submitBtn.textContent = '<%= t('programs.new.create_program') %>';
+    }
+  }
+
+  function initializeFormSubmission() {
+    document.querySelector('form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if (isUploading) {
+        return;
+      }
+      
+      const submitBtn = document.getElementById('create-program-btn');
+      const fileInput = document.getElementById('content-file-input');
+      const file = fileInput.files[0];
+      
+      try {
+        isUploading = true;
+        submitBtn.disabled = true;
+        submitBtn.textContent = '<%= t('programs.new.creating') %>';
+        
+        const formData = new FormData(this);
+        formData.delete('program[content_file]');
+        
+        if (selectedTags.length > 0) {
+          formData.delete('program[tags]');
+          selectedTags.forEach(tag => {
+            formData.append('program[tags][]', tag);
+          });
+        }
+        
+        const createResponse = await fetch(this.action, {
+          method: 'POST',
+          headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+          },
+          credentials: 'same-origin',
+          body: formData
+        });
+        
+        if (!createResponse.ok) {
+          const errorData = await createResponse.json();
+          const errorMsg = errorData.errors ? errorData.errors.join(', ') : `Status: ${createResponse.status}`;
+          throw new Error(`<%= t('programs.new.create_failed') %>: ${errorMsg}`);
+        }
+        
+        const responseData = await createResponse.json();
+        const programId = responseData.id;
+        
+        if (!programId) {
+          throw new Error('<%= t('programs.new.program_id_error') %>');
+        }
+        
+        if (file) {
+          submitBtn.textContent = '<%= t('programs.new.uploading') %>';
+          await uploadContentFile(file, programId);
+        }
+        
+        window.location.href = `/cms/programs/${programId}`;
+        
+      } catch (error) {
+        alert('<%= t('common.error') %>: ' + error.message);
+        submitBtn.disabled = false;
+        updateButtonText();
+        isUploading = false;
+      }
+    });
+  }
+
+  async function uploadContentFile(file, programId) {
+    const progressContainer = document.getElementById('upload-progress-container');
+    const progressFill = document.getElementById('upload-progress-fill');
+    const progressText = document.getElementById('upload-progress-text');
+    
+    progressContainer.style.display = 'block';
+    
+    try {
+      if (typeof performUnifiedUpload === 'undefined') {
+        throw new Error('Upload function not available');
+      }
+      
+      const result = await performUnifiedUpload(file, {
+        progressElement: progressFill,
+        progressTextElement: progressText,
+        onProgress: (progress) => {
+        },
+        onComplete: (result) => {},
+        onError: (error) => {}
+      });
+      
+      const ingestResponse = await fetch(`/api/cms/programs/${programId}/ingest_complete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          s3_key: result.key
+        })
+      });
+      
+      if (!ingestResponse.ok) {
+        const errorData = await ingestResponse.json();
+        throw new Error(`فشل في تسجيل اكتمال التحميل: ${errorData.error || ingestResponse.statusText}`);
+      }
+      
+    } catch (error) {
+      throw new Error(`فشل التحميل: ${error.message}`);
+    }
+  }
+</script>

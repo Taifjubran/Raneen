@@ -1,0 +1,1037 @@
+<div class="discovery-header">
+  <h1><%= t('discovery.title') %></h1>
+  <p class="subtitle"><%= t('discovery.subtitle') %></p>
+</div>
+
+<!-- Search Form -->
+<div class="search-form">
+  <%= form_with url: "#", id: "search-form", local: false do |f| %>
+    <div class="search-main">
+      <div class="search-input-container">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+          <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <%= f.text_field :q, class: "form-control search-input", placeholder: t('discovery.search_placeholder') %>
+        <button type="button" class="filter-toggle" onclick="toggleFilters()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="4" y1="21" x2="4" y2="14" stroke="currentColor" stroke-width="2"/>
+            <line x1="4" y1="10" x2="4" y2="3" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="21" x2="12" y2="12" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="8" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+            <line x1="20" y1="21" x2="20" y2="16" stroke="currentColor" stroke-width="2"/>
+            <line x1="20" y1="12" x2="20" y2="3" stroke="currentColor" stroke-width="2"/>
+            <line x1="1" y1="14" x2="7" y2="14" stroke="currentColor" stroke-width="2"/>
+            <line x1="9" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="2"/>
+            <line x1="17" y1="16" x2="23" y2="16" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span class="filter-text">فلاتر</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="search-filters" id="filters-panel">
+      <div class="filters-grid">
+        <div class="filter-group">
+          <%= f.select :kind, 
+              options_for_select([
+                [t('discovery.all_types'), ''], 
+                [t('program_types.podcast'), 'podcast'], 
+                [t('program_types.documentary'), 'documentary']
+              ]), {}, { class: "filter-select", "data-label": t('discovery.content_type') } %>
+        </div>
+        
+        <div class="filter-group">
+          <%= f.select :language, 
+              options_for_select([
+                [t('discovery.all_languages'), ''], 
+                [t('languages.ar'), 'ar'],
+                [t('languages.en'), 'en']
+              ]), {}, { class: "filter-select", "data-label": t('discovery.language') } %>
+        </div>
+        
+        <div class="filter-group">
+          <%= f.select :category, 
+              options_for_select([
+                [t('discovery.all_categories'), ''],
+                [t('categories.technology'), 'Technology'], 
+                [t('categories.education'), 'Education'],
+                [t('categories.entertainment'), 'Entertainment'],
+                [t('categories.news'), 'News'],
+                [t('categories.sports'), 'Sports'],
+                [t('categories.health'), 'Health'],
+                [t('categories.business'), 'Business'],
+                [t('categories.arts'), 'Arts']
+              ]), {}, { class: "filter-select", "data-label": t('discovery.category') } %>
+        </div>
+        
+        <div class="filter-actions">
+          <button type="button" class="btn-clear" onclick="clearSearch()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="m18 6-12 12" stroke="currentColor" stroke-width="2"/>
+              <path d="m6 6 12 12" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <%= t('common.clear_filters') %>
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- Search Results -->
+<div id="search-results">
+  <div class="results-header" style="display: none;">
+    <h3 class="results-title"><%= t('discovery.results_title') %></h3>
+    <span class="results-count"></span>
+  </div>
+  <div class="programs-grid">
+    <!-- Initial programs will be loaded here -->
+  </div>
+  
+  <div class="empty-results" style="display: none;">
+    <div class="empty-icon">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="11" cy="11" r="8" stroke="#ADB5BD" stroke-width="2"/>
+        <path d="m21 21-4.35-4.35" stroke="#ADB5BD" stroke-width="2"/>
+      </svg>
+    </div>
+    <h3><%= t('discovery.no_results') %></h3>
+    <p><%= t('discovery.no_results_hint') %></p>
+  </div>
+</div>
+
+<!-- Video Player -->
+<div id="player-container">
+  <!-- Player will be inserted here when a program is selected -->
+</div>
+
+<style>
+  .discovery-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .discovery-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 0.5rem;
+  }
+  
+  .discovery-header .subtitle {
+    font-size: 1.1rem;
+    color: #6C757D;
+    margin-bottom: 0;
+  }
+  
+  .search-form {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+    border: 1px solid #F1F3F4;
+  }
+  
+  .search-main {
+    margin-bottom: 0;
+  }
+  
+  .search-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .search-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9CA3AF;
+    z-index: 2;
+  }
+  
+  .search-input {
+    flex: 1;
+    padding-right: 3rem;
+    padding-left: 1rem;
+    font-size: 1rem;
+    height: 2.75rem;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    background: #FAFBFC;
+    transition: all 0.2s ease;
+  }
+  
+  .search-input:focus {
+    border-color: #00D35B;
+    box-shadow: 0 0 0 3px rgba(0, 211, 91, 0.1);
+    background: #FFFFFF;
+    outline: none;
+  }
+  
+  .filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: #F8F9FA;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    color: #6B7280;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  
+  .filter-toggle:hover {
+    background: #F3F4F6;
+    border-color: #D1D5DB;
+    color: #374151;
+  }
+  
+  .filter-toggle.active {
+    background: #00D35B;
+    border-color: #00D35B;
+    color: #000000;
+  }
+  
+  .search-filters {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-top: 0;
+  }
+  
+  .search-filters.expanded {
+    max-height: 200px;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #F1F3F4;
+  }
+  
+  .filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+    align-items: end;
+  }
+  
+  .filter-group {
+    position: relative;
+  }
+  
+  .filter-select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    background: #FAFBFC;
+    color: #374151;
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: left 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-left: 2.5rem;
+  }
+  
+  .filter-select:focus {
+    border-color: #00D35B;
+    box-shadow: 0 0 0 2px rgba(0, 211, 91, 0.1);
+    background: #FFFFFF;
+    outline: none;
+  }
+  
+  .filter-select::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -1.5rem;
+    right: 0;
+    font-size: 0.75rem;
+    color: #6B7280;
+    font-weight: 500;
+  }
+  
+  .filter-actions {
+    display: flex;
+    align-items: end;
+  }
+  
+  .btn-clear {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    color: #6B7280;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  
+  .btn-clear:hover {
+    background: #FEF2F2;
+    border-color: #FCA5A5;
+    color: #DC2626;
+  }
+  
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #E9ECEF;
+  }
+  
+  .results-title {
+    color: #212529;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .results-count {
+    color: #6C757D;
+    font-size: 0.9rem;
+    background: #F8F9FA;
+    padding: 0.5rem 1rem;
+    border-radius: 16px;
+  }
+  
+  .programs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .program-card {
+    background: #FFFFFF;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #E9ECEF;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .program-card:hover {
+    transform: translateY(-4px);
+    border-color: #00D35B;
+    box-shadow: 0 8px 32px rgba(0, 211, 91, 0.15);
+  }
+  
+  .card-thumbnail {
+    position: relative;
+    height: 200px;
+    background: #F8F9FA;
+    overflow: hidden;
+  }
+  
+  .card-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+  
+  .placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #E9ECEF 0%, #F8F9FA 100%);
+    color: #ADB5BD;
+    text-align: center;
+  }
+  
+  .placeholder span {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .card-overlay {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  .duration {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  
+  .card-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-end;
+  }
+  
+  .badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+  
+  .badge-type {
+    background: rgba(0, 211, 91, 0.9);
+    color: #FFFFFF;
+  }
+  
+  .badge-lang {
+    background: rgba(255, 255, 255, 0.9);
+    color: #495057;
+  }
+  
+  .card-content {
+    padding: 1.5rem;
+    direction: rtl;
+    text-align: right;
+  }
+  
+  .card-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #212529;
+  }
+  
+  .card-description {
+    color: #6C757D;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    min-height: 3rem;
+  }
+  
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #ADB5BD;
+  }
+  
+  .publish-date {
+    font-weight: 500;
+  }
+  
+  .category {
+    background: rgba(0, 211, 91, 0.1);
+    color: #00D35B;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 211, 91, 0.3);
+  }
+  
+  .loading-placeholder {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: #FFFFFF;
+    border-radius: 12px;
+    border: 2px dashed #DEE2E6;
+    color: #6C757D;
+    font-size: 1.1rem;
+  }
+  
+  .empty-results {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: #FFFFFF;
+    border-radius: 12px;
+    border: 2px dashed #DEE2E6;
+  }
+  
+  .empty-icon {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .empty-results h3 {
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+  }
+  
+  .empty-results p {
+    color: #6C757D;
+    margin-bottom: 0;
+    font-size: 1rem;
+  }
+  
+  /* Video Modal Styles */
+  .video-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .video-modal.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .video-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    cursor: pointer;
+  }
+  
+  .video-modal-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    margin: 5vh auto;
+    background: #FFFFFF;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .video-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: #F8F9FA;
+    border-bottom: 1px solid #E9ECEF;
+  }
+  
+  .video-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #212529;
+    direction: rtl;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    color: #6C757D;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .close-btn:hover {
+    background: #E9ECEF;
+    color: #495057;
+  }
+  
+  .video-container {
+    position: relative;
+    background: #000000;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .video-player {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    display: block;
+  }
+  
+  .video-info {
+    padding: 1.5rem;
+    direction: rtl;
+    text-align: right;
+  }
+  
+  .video-description {
+    color: #495057;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+  
+  .video-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #6C757D;
+  }
+  
+  .video-category {
+    background: rgba(0, 211, 91, 0.1);
+    color: #00D35B;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 211, 91, 0.3);
+    font-weight: 500;
+  }
+  
+  .video-date {
+    font-weight: 500;
+  }
+  
+  .video-error {
+    text-align: center;
+    padding: 3rem;
+    color: #6C757D;
+  }
+  
+  .video-error svg {
+    margin-bottom: 1rem;
+  }
+  
+  .video-error h3 {
+    color: #DC3545;
+    margin-bottom: 0.5rem;
+  }
+  
+  .video-error p {
+    color: #6C757D;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .search-input-container {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .filter-toggle {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .filters-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .search-filters.expanded {
+      max-height: 300px;
+    }
+    
+    .results-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    
+    .programs-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .video-modal-content {
+      max-width: 95vw;
+      margin: 2.5vh auto;
+    }
+    
+    .video-modal-header {
+      padding: 1rem;
+    }
+    
+    .video-title {
+      font-size: 1.1rem;
+    }
+    
+    .video-info {
+      padding: 1rem;
+    }
+    
+    .video-meta {
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+<script>
+  let currentPage = 1;
+  let isLoading = false;
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    setupFormHandlers();
+    loadPrograms();
+  });
+  
+  function toggleFilters() {
+    const filtersPanel = document.getElementById('filters-panel');
+    const filterToggle = document.querySelector('.filter-toggle');
+    
+    filtersPanel.classList.toggle('expanded');
+    filterToggle.classList.toggle('active');
+  }
+  
+  function setupFormHandlers() {
+    const form = document.getElementById('search-form');
+    
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      currentPage = 1;
+      loadPrograms();
+      return false;
+    });
+    
+    const searchInput = form.querySelector('input[name="q"]');
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        currentPage = 1;
+        loadPrograms();
+      }, 500);
+    });
+    const filters = form.querySelectorAll('.filter-select');
+    filters.forEach(filter => {
+      filter.addEventListener('change', function() {
+        currentPage = 1;
+        loadPrograms();
+      });
+    });
+  }
+  
+  // Clear search filters
+  function clearSearch() {
+    const form = document.getElementById('search-form');
+    form.reset();
+    
+    const filtersPanel = document.getElementById('filters-panel');
+    const filterToggle = document.querySelector('.filter-toggle');
+    filtersPanel.classList.remove('expanded');
+    filterToggle.classList.remove('active');
+    
+    currentPage = 1;
+    loadPrograms();
+  }
+  async function loadPrograms(append = false) {
+    if (isLoading) return;
+    
+    isLoading = true;
+    const form = document.getElementById('search-form');
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+    
+    for (const [key, value] of formData) {
+      if (value.trim() !== '') {
+        params.append(key, value);
+      }
+    }
+    
+    params.append('page', currentPage);
+    params.append('per_page', 12);
+    
+    try {
+      showLoadingState();
+      
+      const response = await fetch(`/api/discovery/programs?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      displayPrograms(data.items, append);
+      updateResultsHeader(data);
+      
+    } catch (error) {
+      showErrorState();
+    } finally {
+      isLoading = false;
+      hideLoadingState();
+    }
+  }
+  
+  function displayPrograms(programs, append = false) {
+    const container = document.querySelector('.programs-grid');
+    const resultsHeader = document.querySelector('.results-header');
+    const emptyResults = document.querySelector('.empty-results');
+    
+    if (!append) {
+      container.innerHTML = '';
+    }
+    
+    if (programs.length === 0 && !append) {
+      resultsHeader.style.display = 'none';
+      emptyResults.style.display = 'block';
+      return;
+    }
+    
+    resultsHeader.style.display = 'flex';
+    emptyResults.style.display = 'none';
+    
+    programs.forEach(program => {
+      const programCard = createProgramCard(program);
+      container.appendChild(programCard);
+    });
+  }
+  
+  function createProgramCard(program) {
+    const card = document.createElement('div');
+    card.className = 'program-card';
+    card.onclick = () => playProgram(program);
+    
+    const cardThumbnail = document.createElement('div');
+    cardThumbnail.className = 'card-thumbnail';
+    
+    if (program.thumbnail_url) {
+      const img = document.createElement('img');
+      img.src = program.thumbnail_url;
+      img.alt = program.title;
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+      cardThumbnail.appendChild(img);
+    } else {
+      cardThumbnail.innerHTML = `
+        <div class="placeholder" style="display: flex;">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+            <polyline points="21,15 16,10 5,21" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>${program.kind}</span>
+        </div>
+      `;
+    }
+    
+    const cardContent = document.createElement('div');
+    cardContent.className = 'card-content';
+    cardContent.innerHTML = `
+      <h3 class="card-title">${program.title}</h3>
+      <p class="card-description">${program.description ? program.description.substring(0, 120) + '...' : 'لا يوجد وصف متاح'}</p>
+      <div class="card-meta">
+        <span class="publish-date">${new Date(program.published_at).toLocaleDateString('ar-EG')}</span>
+        ${program.category ? `<span class="category">${program.category}</span>` : ''}
+      </div>
+    `;
+    
+    card.appendChild(cardThumbnail);
+    card.appendChild(cardContent);
+    
+    return card;
+  }
+  
+  function updateResultsHeader(data) {
+    const resultsCount = document.querySelector('.results-count');
+    resultsCount.textContent = `${data.total} <%= t("discovery.results_found") || "results" %>`;
+  }
+  
+  function showLoadingState() {
+    const container = document.querySelector('.programs-grid');
+    if (currentPage === 1) {
+      container.innerHTML = '<div class="loading-placeholder"><%= t("common.loading") %></div>';
+    }
+  }
+  
+  function hideLoadingState() {
+    const placeholder = document.querySelector('.loading-placeholder');
+    if (placeholder) {
+      placeholder.remove();
+    }
+  }
+  
+  function showErrorState() {
+    const container = document.querySelector('.programs-grid');
+    const emptyResults = document.querySelector('.empty-results');
+    
+    if (currentPage === 1) {
+      container.innerHTML = '';
+      emptyResults.style.display = 'block';
+      emptyResults.querySelector('h3').textContent = 'حدث خطأ في تحميل البرامج';
+      emptyResults.querySelector('p').textContent = 'يرجى المحاولة مرة أخرى';
+    }
+  }
+  
+  function playProgram(program) {
+    // Create modal video player
+    const modal = createVideoModal(program);
+    document.body.appendChild(modal);
+    
+    setTimeout(() => {
+      modal.classList.add('show');
+    }, 10);
+    
+    document.addEventListener('keydown', handleModalKeydown);
+    initializeVideoPlayer(program);
+  }
+  
+  function createVideoModal(program) {
+    const modal = document.createElement('div');
+    modal.className = 'video-modal';
+    modal.id = 'video-modal';
+    
+    modal.innerHTML = `
+      <div class="video-modal-backdrop" onclick="closeVideoModal()"></div>
+      <div class="video-modal-content">
+        <div class="video-modal-header">
+          <h3 class="video-title">${program.title}</h3>
+          <button class="close-btn" onclick="closeVideoModal()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/>
+              <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+        </div>
+        <div class="video-container">
+          <video 
+            id="main-video-player" 
+            controls 
+            preload="metadata"
+            poster="${program.thumbnail_url || ''}"
+            class="video-player">
+            <source src="${program.stream_url}" type="application/x-mpegURL">
+            <p>Your browser doesn't support HLS video playback.</p>
+          </video>
+        </div>
+        <div class="video-info">
+          <p class="video-description">${program.description || 'لا يوجد وصف متاح'}</p>
+          <div class="video-meta">
+            <span class="video-category">${program.category || ''}</span>
+            <span class="video-date">${new Date(program.published_at).toLocaleDateString('ar-EG')}</span>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    return modal;
+  }
+  
+  function initializeVideoPlayer(program) {
+    const video = document.getElementById('main-video-player');
+    
+    if (!video) return;
+    
+    // Check if HLS is supported natively
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = program.stream_url;
+    } else {
+      if (typeof Hls !== 'undefined') {
+        const hls = new Hls();
+        hls.loadSource(program.stream_url);
+        hls.attachMedia(video);
+      } else {
+        loadHlsJs().then(() => {
+          if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(program.stream_url);
+            hls.attachMedia(video);
+          } else {
+            video.src = program.stream_url;
+          }
+        });
+      }
+    }
+    
+    video.addEventListener('error', (e) => {
+      showVideoError();
+    });
+  }
+  
+  function loadHlsJs() {
+    return new Promise((resolve, reject) => {
+      if (typeof Hls !== 'undefined') {
+        resolve();
+        return;
+      }
+      
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js';
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+  
+  function closeVideoModal() {
+    const modal = document.getElementById('video-modal');
+    if (modal) {
+      const video = document.getElementById('main-video-player');
+      if (video) {
+        video.pause();
+        video.src = '';
+      }
+      
+      modal.classList.remove('show');
+      setTimeout(() => {
+        if (modal.parentNode) {
+          document.body.removeChild(modal);
+        }
+      }, 300);
+      
+      document.removeEventListener('keydown', handleModalKeydown);
+    }
+  }
+  
+  function handleModalKeydown(event) {
+    if (event.key === 'Escape') {
+      closeVideoModal();
+    }
+  }
+  
+  function showVideoError() {
+    const container = document.querySelector('.video-container');
+    container.innerHTML = `
+      <div class="video-error">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="#DC3545" stroke-width="2"/>
+          <line x1="15" y1="9" x2="9" y2="15" stroke="#DC3545" stroke-width="2"/>
+          <line x1="9" y1="9" x2="15" y2="15" stroke="#DC3545" stroke-width="2"/>
+        </svg>
+        <h3>خطأ في تشغيل الفيديو</h3>
+        <p>عذراً، لا يمكن تشغيل هذا الفيديو في الوقت الحالي</p>
+      </div>
+    `;
+  }
+</script>

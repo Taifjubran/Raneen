@@ -1,0 +1,210 @@
+ar:
+  # Application
+  app:
+    name: "رَنين"
+    slogan: "بث عابر، صداه مقيم"
+    
+  # Navigation
+  nav:
+    home: "الرئيسية"
+    discovery: "اكتشاف"
+    cms: "إدارة المحتوى"
+    login: "تسجيل الدخول"
+    logout: "تسجيل الخروج"
+    signup: "إنشاء حساب"
+    
+  # Common
+  common:
+    back: "العودة"
+    edit: "تعديل"
+    delete: "حذف"
+    save: "حفظ"
+    cancel: "إلغاء"
+    create: "إنشاء"
+    update: "تحديث"
+    search: "بحث"
+    clear_filters: "مسح الفلاتر"
+    loading: "جاري التحميل..."
+    error: "خطأ"
+    status: "الحالة"
+    confirm_delete: "هل أنت متأكد؟"
+    
+  # Program types
+  program_types:
+    podcast: "بودكاست"
+    documentary: "وثائقي"
+    
+  # Languages
+  languages:
+    ar: "العربية"
+    en: "الإنجليزية"
+    
+  # Status
+  status:
+    draft: "مسودة"
+    processing: "جاري المعالجة"
+    ready: "جاهز"
+    failed: "فشل"
+    
+  # Discovery page
+  discovery:
+    title: "اكتشف المحتوى"
+    subtitle: "استكشف مجموعة متنوعة من البرامج والبودكاست والأفلام الوثائقية"
+    search_programs: "البحث في البرامج"
+    search_placeholder: "ابحث بالعنوان أو الوصف أو الوسوم..."
+    content_type: "نوع المحتوى"
+    language: "اللغة"
+    category: "التصنيف"
+    category_placeholder: "التصنيف..."
+    all_types: "جميع الأنواع"
+    all_languages: "جميع اللغات"
+    all_categories: "جميع التصنيفات"
+    results_title: "نتائج البحث"
+    results_found: "نتيجة"
+    no_results: "لم يتم العثور على نتائج"
+    no_results_hint: "جرب استخدام كلمات مختلفة أو تغيير الفلاتر"
+    
+  # CMS
+  cms:
+    title: "نظام إدارة المحتوى - رَنين"
+    new_program: "إنشاء برنامج جديد"
+    
+  # Program creation
+  programs:
+    new:
+      title: "إنشاء برنامج جديد"
+      subtitle: "قم بإنشاء محتوى جديد وتحميله إلى منصة البث"
+      basic_info: "المعلومات الأساسية"
+      classification: "التصنيفات والوسوم"
+      publishing: "خيارات النشر"
+      file_upload: "تحميل الملف"
+      
+      # Form fields
+      program_title: "عنوان البرنامج"
+      program_title_placeholder: "أدخل عنوان البرنامج..."
+      description: "وصف البرنامج"
+      description_placeholder: "اكتب وصفاً مفصلاً عن محتوى البرنامج وأهدافه..."
+      content_type: "نوع المحتوى"
+      content_type_prompt: "اختر نوع المحتوى"
+      language: "لغة المحتوى"
+      language_prompt: "اختر اللغة"
+      category: "التصنيف"
+      choose_category: "اختر تصنيف"
+      tags: "الوسوم"
+      choose_tag: "اختر وسم"
+      publish_date: "تاريخ النشر"
+      publish_date_hint: "اتركه فارغاً إذا كنت تريد نشره لاحقاً"
+      content_file: "ملف المحتوى"
+      
+      # Categories
+      add_new_category: "+ إضافة تصنيف جديد"
+      new_category_placeholder: "أدخل تصنيف جديد..."
+      
+      # Tags
+      add_new_tag: "+ إضافة وسم جديد"
+      new_tag_placeholder: "أدخل وسم جديد..."
+      
+      # File upload
+      upload_area_text: "انقر هنا لاختيار ملف أو اسحبه إلى هذه المنطقة"
+      upload_hint: "الحد الأقصى: 5 جيجابايت - الصيغ المدعومة: MP4, MOV, AVI, MP3, WAV"
+      upload_progress: "تقدم التحميل"
+      
+      # Buttons
+      create_program: "إنشاء البرنامج"
+      create_and_upload: "إنشاء البرنامج وتحميل المحتوى"
+      creating: "جاري الإنشاء..."
+      uploading: "جاري تحميل المحتوى..."
+      
+      # Error messages
+      create_failed: "فشل في إنشاء البرنامج"
+      upload_failed: "فشل التحميل"
+      program_id_error: "لم يتم تحديد معرف البرنامج بعد الإنشاء"
+      
+    show:
+      program_info: "معلومات البرنامج"
+      publish_now: "نشر الآن"
+      publish_confirm: "هل أنت متأكد من نشر هذا البرنامج؟"
+      back_to_list: "العودة للقائمة"
+      published_on: "نُشر في"
+      not_published: "غير منشور"
+      type: "النوع"
+      duration: "المدة"
+      
+      # Upload sections
+      upload_video: "تحميل ملف الفيديو"
+      upload_description: "اختر ملف فيديو للتحميل والمعالجة للبث."
+      video_file: "ملف الفيديو"
+      supported_formats: "الصيغ المدعومة: MP4, MOV, AVI (الحد الأقصى 5 جيجابايت)"
+      upload_progress: "تقدم التحميل:"
+      upload: "تحميل"
+      
+      processing_video: "معالجة الفيديو"
+      processing_description: "جاري معالجة الفيديو. قد يستغرق هذا عدة دقائق حسب حجم الملف. ستتم تحديث الصفحة تلقائياً عند اكتمال المعالجة."
+      processing_status: "جاري معالجة الفيديو للبث..."
+      
+      preview: "معاينة"
+      ready_message: "برنامجك جاهز للبث!"
+      video_not_supported: "متصفحك لا يدعم عنصر الفيديو."
+      
+      processing_failed: "فشل في المعالجة"
+      processing_error: "حدث خطأ في معالجة الفيديو. يرجى المحاولة مرة أخرى."
+      retry_upload: "إعادة المحاولة"
+      
+    index:
+      no_description: "لا يوجد وصف متاح"
+      no_programs: "لا توجد برامج بعد"
+      create_first: "قم بإنشاء أول برنامج لك للبدء"
+      
+    edit:
+      title: "تعديل البرنامج"
+      update_program: "تحديث البرنامج"
+      error_count: "خطأ"
+      errors_prevented_save: "منعت هذا البرنامج من الحفظ:"
+      program_title: "عنوان البرنامج"
+      description: "وصف البرنامج"
+      content_type: "نوع المحتوى"
+      language: "اللغة"
+      category: "التصنيف"
+      publish_date: "تاريخ النشر"
+      tags_hint: "الوسوم (مفصولة بفواصل)"
+      tags_placeholder: "تقنية، ابتكار، ذكاء اصطناعي"
+      media_file: "ملف الوسائط"
+      current_file: "الملف الحالي"
+      duration: "المدة"
+      stream_url: "رابط البث"
+      view_stream: "عرض البث"
+      upload_failed_message: "فشل في تحميل الملف. يمكنك إعادة المحاولة بتحميل ملف جديد."
+      no_file_uploaded: "لم يتم تحميل أي ملف بعد"
+      replace_file: "استبدال الملف"
+      upload_file: "تحميل ملف"
+      upload_hint: "يمكنك تحميل ملف جديد لاستبدال الملف الحالي. لن يتم حذف الملف الحالي إلا بعد نجاح التحميل الجديد."
+      upload_area_text: "انقر لاختيار ملف أو اسحبه هنا"
+      choose_file: "اختيار ملف"
+      selected_file: "الملف المحدد"
+      file_size: "حجم الملف"
+      start_upload: "بدء التحميل"
+      uploading: "جاري التحميل..."
+      upload_success: "تم تحميل الملف بنجاح! ستبدأ المعالجة قريباً."
+      upload_error: "فشل التحميل"
+      invalid_file_type: "يرجى اختيار ملف فيديو أو صوت"
+      
+  # Categories
+  categories:
+    technology: "تقنية"
+    education: "تعليم"
+    entertainment: "ترفيه"
+    news: "أخبار"
+    sports: "رياضة"
+    health: "صحة"
+    business: "أعمال"
+    arts: "فنون"
+    
+  # Common tags
+  tags:
+    demo: "تجريبي"
+    development: "تطوير"
+    streaming: "بث"
+    test: "اختبار"
+    technology: "تقنية"
+    innovation: "ابتكار"
+    ai: "ذكاء اصطناعي"

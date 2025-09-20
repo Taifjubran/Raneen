@@ -1,0 +1,189 @@
+<script>
+  async function performUnifiedUpload(file, options = {}) {
+    const {
+      onProgress = () => {},
+      onComplete = () => {},
+      onError = () => {},
+      progressElement = null,
+      progressTextElement = null
+    } = options;
+
+    try {
+      const signData = await getSignedUrls(file);
+      await uploadToS3(file, signData, progressElement, progressTextElement);
+
+      onComplete({ key: signData.key });
+      return { key: signData.key };
+
+    } catch (error) {
+      onError(error);
+      throw error;
+    }
+  }
+  async function getSignedUrls(file) {
+    const response = await fetch('/api/cms/uploads/sign', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        filename: file.name,
+        content_type: file.type || 'video/mp4',
+        size_bytes: file.size
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Failed to get upload URLs: ${errorData.error || response.statusText}`);
+    }
+
+    return await response.json();
+  }
+
+  async function uploadToS3(file, signData, progressElement, progressTextElement) {
+    if (signData.upload_type === 'multipart') {
+      await uploadMultipart(file, signData, progressElement, progressTextElement);
+    } else if (signData.upload_type === 'simple') {
+      await uploadSimple(file, signData, progressElement, progressTextElement);
+    } else if (signData.upload_type === 'post') {
+      await uploadPresignedPost(file, signData, progressElement, progressTextElement);
+    } else {
+      throw new Error(`Unknown upload type: ${signData.upload_type}`);
+    }
+  }
+
+  async function uploadSimple(file, signData, progressElement, progressTextElement) {
+    const startTime = Date.now();
+    const uploadPromise = new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 100;
+          if (progressElement) progressElement.style.width = progress + '%';
+          if (progressTextElement) progressTextElement.textContent = Math.round(progress) + '%';
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const etag = xhr.getResponseHeader('ETag');
+          resolve({ 
+            status: xhr.status, 
+            etag: etag,
+            headers: xhr.getAllResponseHeaders()
+          });
+        } else {
+          reject(new Error(`Simple upload failed: ${xhr.status} ${xhr.statusText}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        reject(new Error('Network error during upload'));
+      };
+
+      xhr.ontimeout = () => {
+        reject(new Error('Upload timeout'));
+      };
+
+      xhr.timeout = 300000;
+
+      xhr.open('PUT', signData.presigned_url);
+      xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+      xhr.send(file);
+    });
+
+    const result = await uploadPromise;
+    
+    // Ensure progress shows 100%
+    if (progressElement) progressElement.style.width = '100%';
+    if (progressTextElement) progressTextElement.textContent = '100%';
+
+    return { 
+      key: signData.key, 
+      etag: result.etag,
+      status: result.status
+    };
+  }
+
+  async function uploadMultipart(file, signData, progressElement, progressTextElement) {
+
+    const uploadedParts = [];
+    const partSize = signData.part_size;
+    const startTime = Date.now();
+
+    for (let i = 0; i < signData.parts.length; i++) {
+      const part = signData.parts[i];
+      const start = (part.part_number - 1) * partSize;
+      const end = Math.min(start + part.size, file.size);
+      const chunk = file.slice(start, end);
+
+      try {
+        const partStartTime = Date.now();
+        
+        const response = await fetch(part.presigned_url, {
+          method: 'PUT',
+          body: chunk
+        });
+
+        const partDuration = (Date.now() - partStartTime) / 1000;
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          
+          let s3ErrorCode = 'Unknown';
+          if (errorText && errorText.includes('<Code>')) {
+            const codeMatch = errorText.match(/<Code>([^<]+)<\/Code>/);
+            s3ErrorCode = codeMatch ? codeMatch[1] : 'Unknown';
+          }
+          
+          throw new Error(`Part ${part.part_number} failed: ${response.status} - ${s3ErrorCode}`);
+        }
+
+        const etag = response.headers.get('ETag');
+        if (!etag) {
+          throw new Error(`No ETag received for part ${part.part_number}`);
+        }
+        
+        uploadedParts.push({
+          ETag: etag,
+          PartNumber: part.part_number
+        });
+
+        // Update progress
+        const progress = ((i + 1) / signData.parts.length) * 100;
+        if (progressElement) progressElement.style.width = progress + '%';
+        if (progressTextElement) progressTextElement.textContent = Math.round(progress) + '%';
+
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    const sortedParts = uploadedParts.sort((a, b) => a.PartNumber - b.PartNumber);
+    const xmlBody = `<CompleteMultipartUpload>${sortedParts.map(p => 
+      `<Part><PartNumber>${p.PartNumber}</PartNumber><ETag>${p.ETag}</ETag></Part>`
+    ).join('')}</CompleteMultipartUpload>`;
+
+    const completeResponse = await fetch(signData.complete_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/xml'
+      },
+      body: xmlBody
+    });
+
+    if (!completeResponse.ok) {
+      const errorText = await completeResponse.text();
+      throw new Error(`Failed to complete multipart upload: ${completeResponse.status}`);
+    }
+  }
+  window.performUnifiedUpload = performUnifiedUpload;
+  window.getSignedUrls = getSignedUrls;
+  window.uploadToS3 = uploadToS3;
+  window.uploadMultipart = uploadMultipart;
+  window.uploadSimple = uploadSimple;
+</script>
