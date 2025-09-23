@@ -4,7 +4,7 @@
 </div>
 
 <div class="form-container">
-  <%= form_with model: [:cms, @program], local: true, data: { turbo: false } do |f| %>
+  <%= form_with model: [:cms, @program], local: true, html: { data: { turbo: false }, enctype: "multipart/form-data" } do |f| %>
     <% if @program.errors.any? %>
       <div class="alert alert-error">
         <div class="alert-header">
@@ -745,12 +745,20 @@
   }
 
   function initializeFormSubmission() {
-    document.querySelector('form').addEventListener('submit', async function(e) {
+    const form = document.querySelector('form');
+    
+    // Remove file input from form to prevent accidental submission
+    form.addEventListener('formdata', function(e) {
+      e.formData.delete('program[content_file]');
+    });
+    
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
       e.stopPropagation();
       
       if (isUploading) {
-        return;
+        alert('<%= t('programs.new.upload_in_progress', default: 'Upload already in progress. Please wait...') %>');
+        return false;
       }
       
       const submitBtn = document.getElementById('create-program-btn');
@@ -762,8 +770,22 @@
         submitBtn.disabled = true;
         submitBtn.textContent = '<%= t('programs.new.creating') %>';
         
-        const formData = new FormData(this);
-        formData.delete('program[content_file]');
+        // Create FormData without the file
+        const formData = new FormData();
+        
+        // Manually add all form fields except the file
+        const inputs = this.querySelectorAll('input:not([type="file"]), select, textarea');
+        inputs.forEach(input => {
+          if (input.name && input.name !== 'program[content_file]') {
+            if (input.type === 'checkbox' || input.type === 'radio') {
+              if (input.checked) {
+                formData.append(input.name, input.value);
+              }
+            } else {
+              formData.append(input.name, input.value);
+            }
+          }
+        });
         
         if (selectedTags.length > 0) {
           formData.delete('program[tags]');

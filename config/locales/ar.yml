@@ -106,7 +106,7 @@ ar:
       
       # File upload
       upload_area_text: "انقر هنا لاختيار ملف أو اسحبه إلى هذه المنطقة"
-      upload_hint: "الحد الأقصى: 5 جيجابايت - الصيغ المدعومة: MP4, MOV, AVI, MP3, WAV"
+      upload_hint: "الصيغ المدعومة: MP4, MOV, AVI, MP3, WAV"
       upload_progress: "تقدم التحميل"
       
       # Buttons
@@ -119,6 +119,7 @@ ar:
       create_failed: "فشل في إنشاء البرنامج"
       upload_failed: "فشل التحميل"
       program_id_error: "لم يتم تحديد معرف البرنامج بعد الإنشاء"
+      upload_in_progress: "التحميل قيد التنفيذ. يرجى الانتظار..."
       
     show:
       program_info: "معلومات البرنامج"
@@ -134,7 +135,7 @@ ar:
       upload_video: "تحميل ملف الفيديو"
       upload_description: "اختر ملف فيديو للتحميل والمعالجة للبث."
       video_file: "ملف الفيديو"
-      supported_formats: "الصيغ المدعومة: MP4, MOV, AVI (الحد الأقصى 5 جيجابايت)"
+      supported_formats: "الصيغ المدعومة: MP4, MOV, AVI"
       upload_progress: "تقدم التحميل:"
       upload: "تحميل"
       

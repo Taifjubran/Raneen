@@ -135,7 +135,7 @@ en:
       
       # File upload
       upload_area_text: "Click here to choose a file or drag it to this area"
-      upload_hint: "Maximum: 5GB - Supported formats: MP4, MOV, AVI, MP3, WAV"
+      upload_hint: "Supported formats: MP4, MOV, AVI, MP3, WAV"
       upload_progress: "Upload Progress"
       
       # Buttons
@@ -163,7 +163,7 @@ en:
       upload_video: "Upload Video File"
       upload_description: "Select a video file to upload and process for streaming."
       video_file: "Video File"
-      supported_formats: "Supported formats: MP4, MOV, AVI (max 5GB)"
+      supported_formats: "Supported formats: MP4, MOV, AVI"
       upload_progress: "Upload Progress:"
       upload: "Upload"
       
