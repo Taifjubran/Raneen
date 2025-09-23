@@ -1,9 +1,8 @@
 Rails.application.routes.draw do
-  devise_for :users
-  
   mount ActionCable.server => '/cable'
   
   scope "(:locale)", locale: /ar|en/ do
+    devise_for :users
     root 'home#index'
     get 'discovery', to: 'home#index'
     
