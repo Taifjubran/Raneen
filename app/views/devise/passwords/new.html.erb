@@ -1,16 +1,166 @@
-<h2>Forgot your password?</h2>
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2><%= t('devise.passwords.new.forgot_your_password') %></h2>
+      <p class="subtitle"><%= t('devise.passwords.new.subtitle', default: "Enter your email and we'll send you instructions to reset your password") %></p>
+    </div>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, data: { turbo: false } }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      <div class="form-group">
+        <%= f.label :email %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control",
+            placeholder: t('devise.passwords.new.email_placeholder', default: 'Enter your email address') %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit t('devise.passwords.new.send_me_reset_password_instructions'), class: "btn btn-primary btn-block" %>
+      </div>
+    <% end %>
+
+    <div class="auth-links">
+      <%= render "devise/shared/links" %>
+    </div>
   </div>
+</div>
 
-  <div class="actions">
-    <%= f.submit "Send me reset password instructions" %>
-  </div>
-<% end %>
+<style>
+  .auth-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
 
-<%= render "devise/shared/links" %>
+  .auth-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 450px;
+    width: 100%;
+    padding: 2.5rem;
+  }
+
+  .auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .auth-header h2 {
+    color: #212529;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .auth-header .subtitle {
+    color: #6C757D;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.95rem;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #E9ECEF;
+    border-radius: 8px;
+    background: #FFFFFF;
+    color: #495057;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: #00D35B;
+    box-shadow: 0 0 0 3px rgba(0, 211, 91, 0.1);
+  }
+
+  .form-control::placeholder {
+    color: #ADB5BD;
+  }
+
+  .form-actions {
+    margin-top: 2rem;
+  }
+
+  .btn-block {
+    width: 100%;
+  }
+
+  .btn-primary {
+    background: #00D35B;
+    color: #000000;
+    padding: 0.875rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    font-family: inherit;
+  }
+
+  .btn-primary:hover {
+    background: #00B94E;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 211, 91, 0.3);
+  }
+
+  .auth-links {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #E9ECEF;
+    text-align: center;
+  }
+
+  .auth-links a {
+    color: #00D35B;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    display: inline-block;
+    margin: 0.25rem 0;
+    transition: color 0.2s ease;
+  }
+
+  .auth-links a:hover {
+    color: #00B94E;
+    text-decoration: underline;
+  }
+
+  .field_with_errors {
+    display: inline;
+  }
+
+  .field_with_errors .form-control {
+    border-color: #DC3545;
+  }
+
+  @media (max-width: 768px) {
+    .auth-card {
+      padding: 1.5rem;
+    }
+
+    .auth-header h2 {
+      font-size: 1.5rem;
+    }
+  }
+</style>

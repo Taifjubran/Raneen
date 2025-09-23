@@ -167,6 +167,14 @@
         transform: translateY(-2px);
       }
       
+      form.button_to {
+        display: inline;
+      }
+      
+      form.button_to .btn {
+        display: inline-block;
+      }
+      
       .container {
         max-width: 1400px;
         margin: 0 auto;
@@ -297,7 +305,7 @@
           </div>
           
           <% if user_signed_in? %>
-            <%= link_to t('nav.logout'), destroy_user_session_path, method: :delete, class: "btn btn-secondary" %>
+            <%= button_to t('nav.logout'), destroy_user_session_path, method: :delete, class: "btn btn-secondary", data: { turbo: false } %>
           <% end %>
         </nav>
       </div>
