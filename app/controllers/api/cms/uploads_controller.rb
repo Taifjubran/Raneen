@@ -58,7 +58,7 @@ module Api
         puts "Content-Type: #{content_type}"
         puts "Bucket: #{ENV['S3_UPLOADS_BUCKET']}"
         puts "Region: #{ENV['AWS_REGION']}"
-        
+
         Rails.logger.info "=== Creating Multipart Upload ==="
         Rails.logger.info "File: #{params[:filename]}"
         Rails.logger.info "Size: #{size_bytes} bytes (#{(size_bytes / 1024.0 / 1024.0).round(2)} MB)"
@@ -66,11 +66,15 @@ module Api
         Rails.logger.info "Content-Type: #{content_type}"
         Rails.logger.info "Bucket: #{ENV['S3_UPLOADS_BUCKET']}"
         Rails.logger.info "Region: #{ENV['AWS_REGION']}"
-        
+
+        # Use Transfer Acceleration if enabled
+        use_accelerate = ENV['S3_USE_ACCELERATE'] == 'true'
+
         s3 = Aws::S3::Client.new(
           region: ENV['AWS_REGION'],
           access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-          secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
+          secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+          use_accelerate_endpoint: use_accelerate
         )
         
         presigner = Aws::S3::Presigner.new(client: s3)
@@ -204,10 +208,13 @@ module Api
       end
 
       def create_simple_upload(key, content_type)
+        use_accelerate = ENV['S3_USE_ACCELERATE'] == 'true'
+
         s3 = Aws::S3::Client.new(
           region: ENV['AWS_REGION'],
           access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-          secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
+          secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+          use_accelerate_endpoint: use_accelerate
         )
         
         presigner = Aws::S3::Presigner.new(client: s3)
