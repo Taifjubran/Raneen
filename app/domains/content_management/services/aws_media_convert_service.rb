@@ -61,9 +61,25 @@ module ContentManagement
       private
       
       def build_aws_client
+        # First create a base client to fetch the account-specific endpoint
+        base_client = Aws::MediaConvert::Client.new(
+          region: ENV['AWS_REGION'] || 'us-east-1',
+          access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+          secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
+        )
+
+        # Fetch the account-specific endpoint dynamically
+        endpoints = base_client.describe_endpoints
+        endpoint_url = endpoints.endpoints.first.url
+
+        Rails.logger.info "Using MediaConvert endpoint: #{endpoint_url}"
+
+        # Create the actual client with the correct endpoint
         Aws::MediaConvert::Client.new(
-          endpoint: ENV['MEDIACONVERT_ENDPOINT'],
-          region: ENV['AWS_REGION'] || 'us-east-1'
+          endpoint: endpoint_url,
+          region: ENV['AWS_REGION'] || 'us-east-1',
+          access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+          secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
         )
       end
       
