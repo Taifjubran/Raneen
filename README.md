@@ -10,7 +10,7 @@ Media streaming platform built with Ruby on Rails.
 
 ## Quick Start
 
-### 1. Setup Environment
+#### 1. Setup Environment
 
 Create `.env` file with your AWS credentials:
 
