@@ -62,8 +62,6 @@ module Api
             tags: program.tags,
             thumbnail_url: program.full_thumbnail_url,
             poster_url: program.full_poster_url || program.full_thumbnail_url,
-            preview_video_url: program.full_preview_video_url,
-            sprite_sheet_url: program.full_sprite_sheet_url,
             stream_url: program.stream_url,
             created_at: program.created_at,
             updated_at: program.updated_at

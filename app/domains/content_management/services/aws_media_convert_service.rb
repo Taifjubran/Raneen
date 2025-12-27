@@ -108,8 +108,6 @@ module ContentManagement
           ],
           output_groups: [
             build_thumbnail_output_group(program_id),
-            build_preview_output_group(program_id),
-            build_sprite_output_group(program_id),
             build_hls_output_group(program_id)
           ]
         }
@@ -127,14 +125,14 @@ module ContentManagement
                 width: 1280,
                 scaling_behavior: "DEFAULT",
                 height: 720,
-                sharpness: 100,
+                sharpness: 50,  # Reduced from 100 for faster processing
                 codec_settings: {
                   codec: "H_264",
                   h264_settings: {
-                    max_bitrate: 5000000,
+                    max_bitrate: 4000000,  # Reduced from 5Mbps for faster encoding
                     rate_control_mode: "QVBR",
                     qvbr_settings: {
-                      qvbr_quality_level: 7
+                      qvbr_quality_level: 6  # Reduced from 7 for faster encoding (still good quality)
                     }
                   }
                 }
@@ -165,88 +163,6 @@ module ContentManagement
               segment_length: 10,
               destination: "s3://#{ENV['S3_OUTPUTS_BUCKET']}/hls/#{program_id}/",
               min_segment_length: 0
-            }
-          }
-        }
-      end
-      
-      def build_preview_output_group(program_id)
-        {
-          name: "Preview Clip",
-          outputs: [
-            {
-              container_settings: {
-                container: "MP4"
-              },
-              video_description: {
-                width: 640,
-                scaling_behavior: "DEFAULT",
-                height: 360,
-                codec_settings: {
-                  codec: "H_264",
-                  h264_settings: {
-                    max_bitrate: 1000000,
-                    rate_control_mode: "QVBR",
-                    qvbr_settings: {
-                      qvbr_quality_level: 7
-                    }
-                  }
-                }
-              },
-              audio_descriptions: [
-                {
-                  audio_source_name: "Audio Selector 1",
-                  codec_settings: {
-                    codec: "AAC",
-                    aac_settings: {
-                      bitrate: 96000,
-                      coding_mode: "CODING_MODE_2_0",
-                      sample_rate: 48000
-                    }
-                  }
-                }
-              ],
-              name_modifier: "_preview"
-            }
-          ],
-          output_group_settings: {
-            type: "FILE_GROUP_SETTINGS",
-            file_group_settings: {
-              destination: "s3://#{ENV['S3_OUTPUTS_BUCKET']}/previews/#{program_id}/"
-            }
-          }
-        }
-      end
-      
-      def build_sprite_output_group(program_id)
-        {
-          name: "Thumbnail Sprites",
-          outputs: [
-            {
-              container_settings: {
-                container: "RAW"
-              },
-              video_description: {
-                width: 160,
-                scaling_behavior: "DEFAULT",
-                height: 90,
-                codec_settings: {
-                  codec: "FRAME_CAPTURE",
-                  frame_capture_settings: {
-                    framerate_numerator: 1,
-                    framerate_denominator: 10,
-                    max_captures: 100,
-                    quality: 80
-                  }
-                }
-              },
-              name_modifier: "_sprite"
-            }
-          ],
-          output_group_settings: {
-            type: "FILE_GROUP_SETTINGS",
-            file_group_settings: {
-              destination: "s3://#{ENV['S3_OUTPUTS_BUCKET']}/sprites/#{program_id}/"
             }
           }
         }
