@@ -19,7 +19,7 @@ module ContentManagement
           settings: job_settings,
           billing_tags_source: "JOB",
           acceleration_settings: {
-            mode: "DISABLED"
+            mode: "PREFERRED"  # Use accelerated transcoding when available (2-4x faster)
           },
           status_update_interval: "SECONDS_60",
           priority: 0

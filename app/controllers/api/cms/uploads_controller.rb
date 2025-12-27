@@ -159,7 +159,7 @@ module Api
           parts: parts,
           part_size: part_size,
           total_parts: parts_count,
-          recommended_concurrency: [[parts_count, 10].min, 6].max,  # 6-10 parallel uploads
+          recommended_concurrency: [[parts_count, 15].min, 10].max,  # 10-15 parallel uploads for maximum speed
           require_no_headers_for_parts: true,  # Tell client not to send headers for parts
           complete_url: complete_url,
           abort_url: presigner.presigned_url(

@@ -69,52 +69,50 @@ async function uploadMultipart(file, signData, progressElement, progressTextElem
   const partSize = signData.part_size;
   const startTime = Date.now();
 
-  for (let i = 0; i < signData.parts.length; i++) {
-    const part = signData.parts[i];
+  // Use high concurrency for faster uploads (8-12 parallel uploads)
+  const concurrency = signData.recommended_concurrency || 10;
+  let completedParts = 0;
+
+  // Upload a single part
+  async function uploadPart(part) {
     const start = (part.part_number - 1) * partSize;
     const end = Math.min(start + part.size, file.size);
     const chunk = file.slice(start, end);
 
-    try {
-      const partStartTime = Date.now();
-      
-      const response = await fetch(part.presigned_url, {
-        method: 'PUT',
-        body: chunk
-      });
+    const response = await fetch(part.presigned_url, {
+      method: 'PUT',
+      body: chunk
+    });
 
-      const partDuration = (Date.now() - partStartTime) / 1000;
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        
-        let s3ErrorCode = 'Unknown';
-        if (errorText && errorText.includes('<Code>')) {
-          const codeMatch = errorText.match(/<Code>([^<]+)<\/Code>/);
-          s3ErrorCode = codeMatch ? codeMatch[1] : 'Unknown';
-        }
-        
-        throw new Error(`Part ${part.part_number} failed: ${response.status} - ${s3ErrorCode}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      let s3ErrorCode = 'Unknown';
+      if (errorText && errorText.includes('<Code>')) {
+        const codeMatch = errorText.match(/<Code>([^<]+)<\/Code>/);
+        s3ErrorCode = codeMatch ? codeMatch[1] : 'Unknown';
       }
-
-      const etag = response.headers.get('ETag');
-      if (!etag) {
-        throw new Error(`No ETag received for part ${part.part_number}`);
-      }
-      
-      uploadedParts.push({
-        ETag: etag,
-        PartNumber: part.part_number
-      });
-
-      const progress = ((i + 1) / signData.parts.length) * 100;
-      if (progressElement) progressElement.style.width = progress + '%';
-      if (progressTextElement) progressTextElement.textContent = Math.round(progress) + '%';
-
-    } catch (error) {
-      console.error(`Part ${part.part_number} failed:`, error);
-      throw error;
+      throw new Error(`Part ${part.part_number} failed: ${response.status} - ${s3ErrorCode}`);
     }
+
+    const etag = response.headers.get('ETag');
+    if (!etag) {
+      throw new Error(`No ETag received for part ${part.part_number}`);
+    }
+
+    completedParts++;
+    const progress = (completedParts / signData.parts.length) * 100;
+    if (progressElement) progressElement.style.width = progress + '%';
+    if (progressTextElement) progressTextElement.textContent = Math.round(progress) + '%';
+
+    return { ETag: etag, PartNumber: part.part_number };
+  }
+
+  // Process parts in parallel batches
+  const parts = [...signData.parts];
+  while (parts.length > 0) {
+    const batch = parts.splice(0, concurrency);
+    const results = await Promise.all(batch.map(part => uploadPart(part)));
+    uploadedParts.push(...results);
   }
 
   const sortedParts = uploadedParts.sort((a, b) => a.PartNumber - b.PartNumber);
