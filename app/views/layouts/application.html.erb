@@ -267,6 +267,90 @@
         color: #8A2BE2;
         border: 1px solid rgba(138, 43, 226, 0.3);
       }
+
+      /* Mobile Menu */
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .menu-toggle span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: #212529;
+        transition: all 0.3s ease;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .navbar {
+          padding: 0.75rem 1rem;
+          flex-wrap: wrap;
+        }
+
+        .navbar .logo {
+          font-size: 1.4rem;
+        }
+
+        .slogan {
+          font-size: 0.65rem;
+        }
+
+        .menu-toggle {
+          display: flex;
+        }
+
+        .navbar nav {
+          display: none;
+          width: 100%;
+          flex-direction: column;
+          gap: 0.5rem;
+          padding-top: 1rem;
+          border-top: 1px solid #E9ECEF;
+          margin-top: 0.75rem;
+        }
+
+        .navbar nav.active {
+          display: flex;
+        }
+
+        .navbar nav a {
+          width: 100%;
+          text-align: center;
+          padding: 0.75rem 1rem;
+        }
+
+        .language-switcher {
+          justify-content: center;
+          margin: 0.5rem 0;
+        }
+
+        .btn {
+          width: 100%;
+          text-align: center;
+          padding: 0.875rem 1.5rem;
+        }
+
+        .container {
+          padding: 1rem;
+        }
+
+        h1 {
+          font-size: 1.75rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 0.75rem;
+        }
+      }
     </style>
   </head>
 
@@ -277,7 +361,13 @@
           <%= link_to t('app.name'), root_path, class: "logo" %>
           <span class="slogan"><%= t('app.slogan') %></span>
         </div>
-        
+
+        <button class="menu-toggle" onclick="document.querySelector('.navbar nav').classList.toggle('active')">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
         <nav>
           <%= link_to t('nav.home'), root_path %>
           
