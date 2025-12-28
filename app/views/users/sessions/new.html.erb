@@ -1,0 +1,175 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1><%= t('devise.sessions.new.sign_in') %></h1>
+      <p class="auth-subtitle"><%= t('auth.login_subtitle') %></p>
+    </div>
+
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "auth-form" }) do |f| %>
+      <div class="form-group">
+        <%= f.label :email, t('activerecord.attributes.user.email') %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: t('auth.email_placeholder') %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password, t('activerecord.attributes.user.password') %>
+        <%= f.password_field :password, autocomplete: "current-password", class: "form-control", placeholder: t('auth.password_placeholder') %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+        <div class="form-group remember-me">
+          <%= f.check_box :remember_me, id: "remember_me" %>
+          <%= f.label :remember_me, t('activerecord.attributes.user.remember_me') %>
+        </div>
+      <% end %>
+
+      <div class="form-actions">
+        <%= f.submit t('devise.sessions.new.sign_in'), class: "btn btn-primary btn-full" %>
+      </div>
+    <% end %>
+
+    <div class="auth-links">
+      <p><%= t('auth.no_account') %> <%= link_to t('devise.shared.links.sign_up'), new_registration_path(resource_name) %></p>
+      <% if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+        <p><%= link_to t('devise.shared.links.forgot_your_password'), new_password_path(resource_name) %></p>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .auth-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .auth-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .auth-header h1 {
+    color: #212529;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .auth-subtitle {
+    color: #6C757D;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .auth-form .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .auth-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #495057;
+  }
+
+  .auth-form .form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #E9ECEF;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+    direction: ltr;
+    text-align: start;
+  }
+
+  .auth-form .form-control:focus {
+    outline: none;
+    border-color: #00D35B;
+    box-shadow: 0 0 0 3px rgba(0, 211, 91, 0.1);
+  }
+
+  .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .remember-me input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #00D35B;
+  }
+
+  .remember-me label {
+    margin: 0;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .form-actions {
+    margin-top: 2rem;
+  }
+
+  .btn-primary {
+    background: #00D35B;
+    color: #000000;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-full {
+    width: 100%;
+  }
+
+  .btn-primary:hover {
+    background: #00B94E;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 211, 91, 0.3);
+  }
+
+  .auth-links {
+    margin-top: 2rem;
+    text-align: center;
+    border-top: 1px solid #E9ECEF;
+    padding-top: 1.5rem;
+  }
+
+  .auth-links p {
+    margin: 0.5rem 0;
+    color: #6C757D;
+  }
+
+  .auth-links a {
+    color: #00D35B;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .auth-links a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 480px) {
+    .auth-card {
+      padding: 2rem 1.5rem;
+    }
+  }
+</style>

@@ -1,0 +1,191 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1><%= t('devise.registrations.new.sign_up') %></h1>
+      <p class="auth-subtitle"><%= t('auth.signup_subtitle') %></p>
+    </div>
+
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "auth-form" }) do |f| %>
+      <% if resource.errors.any? %>
+        <div class="alert alert-error">
+          <ul>
+            <% resource.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :email, t('activerecord.attributes.user.email') %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: t('auth.email_placeholder') %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password, t('activerecord.attributes.user.password') %>
+        <% if @minimum_password_length %>
+          <small class="password-hint"><%= t('devise.shared.minimum_password_length', count: @minimum_password_length) %></small>
+        <% end %>
+        <%= f.password_field :password, autocomplete: "new-password", class: "form-control", placeholder: t('auth.password_placeholder') %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password_confirmation, t('activerecord.attributes.user.password_confirmation') %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", placeholder: t('auth.confirm_password_placeholder') %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit t('devise.registrations.new.sign_up'), class: "btn btn-primary btn-full" %>
+      </div>
+    <% end %>
+
+    <div class="auth-links">
+      <p><%= t('auth.have_account') %> <%= link_to t('devise.shared.links.sign_in'), new_session_path(resource_name) %></p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .auth-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .auth-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .auth-header h1 {
+    color: #212529;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .auth-subtitle {
+    color: #6C757D;
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .auth-form .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .auth-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #495057;
+  }
+
+  .password-hint {
+    display: block;
+    color: #6C757D;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .auth-form .form-control {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #E9ECEF;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+    direction: ltr;
+    text-align: start;
+  }
+
+  .auth-form .form-control:focus {
+    outline: none;
+    border-color: #00D35B;
+    box-shadow: 0 0 0 3px rgba(0, 211, 91, 0.1);
+  }
+
+  .form-actions {
+    margin-top: 2rem;
+  }
+
+  .btn-primary {
+    background: #00D35B;
+    color: #000000;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-full {
+    width: 100%;
+  }
+
+  .btn-primary:hover {
+    background: #00B94E;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 211, 91, 0.3);
+  }
+
+  .auth-links {
+    margin-top: 2rem;
+    text-align: center;
+    border-top: 1px solid #E9ECEF;
+    padding-top: 1.5rem;
+  }
+
+  .auth-links p {
+    margin: 0.5rem 0;
+    color: #6C757D;
+  }
+
+  .auth-links a {
+    color: #00D35B;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .auth-links a:hover {
+    text-decoration: underline;
+  }
+
+  .alert-error {
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    color: #DC3545;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .alert-error ul {
+    margin: 0;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .alert-error li {
+    margin: 0.25rem 0;
+  }
+
+  @media (max-width: 480px) {
+    .auth-card {
+      padding: 2rem 1.5rem;
+    }
+  }
+</style>

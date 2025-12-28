@@ -1,0 +1,94 @@
+# Arabic translations for Devise
+
+ar:
+  devise:
+    confirmations:
+      confirmed: "تم تأكيد بريدك الإلكتروني بنجاح."
+      send_instructions: "ستتلقى بريداً إلكترونياً يحتوي على تعليمات تأكيد بريدك الإلكتروني خلال دقائق."
+      send_paranoid_instructions: "إذا كان بريدك الإلكتروني موجوداً في قاعدة بياناتنا، ستتلقى تعليمات التأكيد خلال دقائق."
+    failure:
+      already_authenticated: "لقد سجلت الدخول بالفعل."
+      inactive: "حسابك غير مفعل بعد."
+      invalid: "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+      locked: "حسابك مقفل."
+      last_attempt: "لديك محاولة واحدة متبقية قبل قفل حسابك."
+      not_found_in_database: "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+      timeout: "انتهت صلاحية جلستك. الرجاء تسجيل الدخول مرة أخرى."
+      unauthenticated: "يجب تسجيل الدخول أو إنشاء حساب للمتابعة."
+      unconfirmed: "يجب تأكيد بريدك الإلكتروني قبل المتابعة."
+    mailer:
+      confirmation_instructions:
+        subject: "تعليمات التأكيد"
+      reset_password_instructions:
+        subject: "تعليمات إعادة تعيين كلمة المرور"
+      unlock_instructions:
+        subject: "تعليمات فتح الحساب"
+      email_changed:
+        subject: "تم تغيير البريد الإلكتروني"
+      password_change:
+        subject: "تم تغيير كلمة المرور"
+    omniauth_callbacks:
+      failure: "تعذر التحقق من حسابك عبر %{kind} بسبب \"%{reason}\"."
+      success: "تم التحقق بنجاح من حساب %{kind}."
+    passwords:
+      no_token: "لا يمكنك الوصول إلى هذه الصفحة إلا من خلال رابط إعادة تعيين كلمة المرور. تأكد من استخدام الرابط الكامل."
+      send_instructions: "ستتلقى بريداً إلكترونياً يحتوي على تعليمات إعادة تعيين كلمة المرور خلال دقائق."
+      send_paranoid_instructions: "إذا كان بريدك الإلكتروني موجوداً في قاعدة بياناتنا، ستتلقى رابط استعادة كلمة المرور خلال دقائق."
+      updated: "تم تغيير كلمة المرور بنجاح. تم تسجيل دخولك."
+      updated_not_active: "تم تغيير كلمة المرور بنجاح."
+    registrations:
+      destroyed: "تم إلغاء حسابك بنجاح. نأمل أن نراك مرة أخرى قريباً."
+      signed_up: "مرحباً! تم إنشاء حسابك بنجاح."
+      signed_up_but_inactive: "تم إنشاء حسابك بنجاح. لكن لم نتمكن من تسجيل دخولك لأن حسابك غير مفعل."
+      signed_up_but_locked: "تم إنشاء حسابك بنجاح. لكن لم نتمكن من تسجيل دخولك لأن حسابك مقفل."
+      signed_up_but_unconfirmed: "تم إرسال رسالة تحتوي على رابط التأكيد إلى بريدك الإلكتروني. يرجى اتباع الرابط لتفعيل حسابك."
+      update_needs_confirmation: "تم تحديث حسابك بنجاح، لكننا نحتاج للتحقق من بريدك الإلكتروني الجديد."
+      updated: "تم تحديث حسابك بنجاح."
+      updated_but_not_signed_in: "تم تحديث حسابك بنجاح، لكن بما أنه تم تغيير كلمة المرور، يجب تسجيل الدخول مرة أخرى."
+      new:
+        sign_up: "إنشاء حساب"
+    sessions:
+      signed_in: "تم تسجيل الدخول بنجاح."
+      signed_out: "تم تسجيل الخروج بنجاح."
+      already_signed_out: "تم تسجيل الخروج بنجاح."
+      new:
+        sign_in: "تسجيل الدخول"
+    unlocks:
+      send_instructions: "ستتلقى بريداً إلكترونياً يحتوي على تعليمات فتح حسابك خلال دقائق."
+      send_paranoid_instructions: "إذا كان حسابك موجوداً، ستتلقى تعليمات فتح الحساب خلال دقائق."
+      unlocked: "تم فتح حسابك بنجاح. الرجاء تسجيل الدخول."
+    shared:
+      links:
+        back: "العودة"
+        didn_t_receive_confirmation_instructions: "لم تستلم تعليمات التأكيد؟"
+        didn_t_receive_unlock_instructions: "لم تستلم تعليمات فتح الحساب؟"
+        forgot_your_password: "نسيت كلمة المرور؟"
+        sign_in: "تسجيل الدخول"
+        sign_in_with_provider: "تسجيل الدخول عبر %{provider}"
+        sign_up: "إنشاء حساب"
+      minimum_password_length: "%{count} أحرف كحد أدنى"
+  errors:
+    messages:
+      already_confirmed: "تم تأكيده مسبقاً، يرجى تسجيل الدخول"
+      confirmation_period_expired: "يجب تأكيده خلال %{period}، يرجى طلب واحد جديد"
+      expired: "انتهت صلاحيته، يرجى طلب واحد جديد"
+      not_found: "غير موجود"
+      not_locked: "لم يكن مقفلاً"
+      not_saved:
+        one: "خطأ واحد منع حفظ %{resource}:"
+        other: "%{count} أخطاء منعت حفظ %{resource}:"
+  auth:
+    login_subtitle: "مرحباً بعودتك! سجل الدخول للمتابعة."
+    signup_subtitle: "أنشئ حسابك للبدء."
+    email_placeholder: "أدخل بريدك الإلكتروني"
+    password_placeholder: "أدخل كلمة المرور"
+    confirm_password_placeholder: "تأكيد كلمة المرور"
+    no_account: "ليس لديك حساب؟"
+    have_account: "لديك حساب بالفعل؟"
+  activerecord:
+    attributes:
+      user:
+        email: "البريد الإلكتروني"
+        password: "كلمة المرور"
+        password_confirmation: "تأكيد كلمة المرور"
+        remember_me: "تذكرني"
